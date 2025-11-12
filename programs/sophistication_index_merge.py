@@ -19,6 +19,7 @@ df = df.merge(hmda, on="fips", how="inner")
 df = df[df['state_fips_x'] != '72'] 
 df.drop(columns=['state_abbr', 'state_fips_y', 'county_fips_y', 'county_name'], inplace=True)
 
+df['median_hh_income'] = np.log(df['median_hh_income'])
 df['median_hh_income_z'] = (df['median_hh_income'] - df['median_hh_income'].mean()) / df['median_hh_income'].std()
 df['share_ba_plus_z'] = (df['share_ba_plus'] - df['share_ba_plus'].mean()) / df['share_ba_plus'].std()
 df['share_age_65plus_z'] = (df['share_age_65plus'] - df['share_age_65plus'].mean()) / df['share_age_65plus'].std()
