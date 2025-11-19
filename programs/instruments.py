@@ -1,13 +1,13 @@
 """Builds a bank-level panel combining county sophistication and deposit concentration measures.
 
 Inputs
-- data/raw/SOD.csv: FDIC SOD extract with at least YEAR, CERT, NAMEFULL, ASSET, BKCLASS,
+- data/raw/SOD.csv: FDIC SOD extract with at least YEAR, RSSDID, NAMEFULL, ASSET, BKCLASS,
   DEPDOM (bank total domestic deposits), DEPSUMBR (branch deposits), STCNTYBR (county FIPS).
 - data/processed/sophistication_index.csv: county-level sophistication index with 'fips'.
 
 Output
-- data/processed/bank_2021_with_si&hhi.csv: one row per (YEAR, CERT) including z-scored
-  sophistication and HHI exposures.
+- data/processed/instruments.csv: one row per (YEAR, RSSDID) including z-scored sophistication
+  and HHI exposures.
 
 Notes
 - Branch weights use DEPSUMBR / DEPDOM and are renormalized when some counties lack an index.
@@ -86,7 +86,7 @@ sod = pd.read_csv("data/raw/SOD.csv")
 sophistication_index = pd.read_csv("data/processed/sophistication_index.csv")
 
 # Keep only the columns required for this build (helps memory and ensures consistent inputs).
-sod_mask = ['YEAR', 'CERT', 'NAMEFULL', 'ASSET', 'BKCLASS', 'DEPDOM', 'DEPSUMBR', 'STCNTYBR']
+sod_mask = ['YEAR', 'RSSDID', 'NAMEFULL', 'ASSET', 'BKCLASS', 'DEPDOM', 'DEPSUMBR', 'STCNTYBR']
 sod = sod[sod_mask]
 
 sod['STCNTYBR'] = sod['STCNTYBR'].astype(str).str.zfill(5)  # standardize county FIPS format
@@ -107,14 +107,14 @@ sophistication_index['fips'] = sophistication_index['fips'].astype(str).str.zfil
 sod = sod.merge(sophistication_index[['fips', 'sophistication_index']], on='fips', how='left')
 
 # Bank-level branch density BEFORE HHI: branches per $1B of DEPDOM.
-# Count branches per (YEAR, CERT) and divide by bank DEPDOM (in billions).
+# Count branches per (YEAR, RSSDID) and divide by bank DEPDOM (in billions).
 branch_count = (
-    sod.groupby(['YEAR', 'CERT'])
+    sod.groupby(['YEAR', 'RSSDID'])
     .size()
     .reset_index(name='branch_count')
 )
-bank_depdom = sod.groupby(['YEAR', 'CERT'], as_index=False)['DEPDOM'].first()
-branch_density_df = branch_count.merge(bank_depdom, on=['YEAR', 'CERT'], how='left')
+bank_depdom = sod.groupby(['YEAR', 'RSSDID'], as_index=False)['DEPDOM'].first()
+branch_density_df = branch_count.merge(bank_depdom, on=['YEAR', 'RSSDID'], how='left')
 branch_density_df['branch_density'] = (
     (branch_density_df['branch_count'] / branch_density_df['DEPDOM'] / 1_000_000_000)
     .where(branch_density_df['DEPDOM'] > 0)
@@ -124,16 +124,16 @@ branch_density_df['branch_density'] = (
 # We compute as sum(DEPSUMBR in division) / DEPDOM for the bank-year.
 division_deposits = (
     sod.dropna(subset=['census_division'])
-    .groupby(['YEAR', 'CERT', 'census_division'], as_index=False)['DEPSUMBR']
+    .groupby(['YEAR', 'RSSDID', 'census_division'], as_index=False)['DEPSUMBR']
     .sum()
     .rename(columns={'DEPSUMBR': 'division_deposits'})
 )
-division_share = division_deposits.merge(bank_depdom, on=['YEAR', 'CERT'], how='left')
+division_share = division_deposits.merge(bank_depdom, on=['YEAR', 'RSSDID'], how='left')
 division_share['division_share'] = (
     (division_share['division_deposits'] / division_share['DEPDOM']).where(division_share['DEPDOM'] > 0)
 )
 division_pivot = (
-    division_share.pivot(index=['YEAR', 'CERT'], columns='census_division', values='division_share')
+    division_share.pivot(index=['YEAR', 'RSSDID'], columns='census_division', values='division_share')
     .fillna(0)
     .reset_index()
 )
@@ -155,13 +155,13 @@ DIVISION_CODE_MAP = {
 }
 division_pivot = division_pivot.rename(columns=DIVISION_CODE_MAP)
 
-# Compute bank-level weighted sophistication index (by YEAR, CERT).
+# Compute bank-level weighted sophistication index (by YEAR, RSSDID).
 # We weight county sophistication by the bank's deposit distribution. Because some counties can
 # be missing an index, we divide by the sum of weights with non-missing sophistication to re-scale.
 valid = sod.dropna(subset=['sophistication_index']).copy()
 valid['weighted_sophistication_component'] = valid['sophistication_index'] * valid['weight']
 bank_agg = (
-    valid.groupby(['YEAR', 'CERT'], as_index=False)
+    valid.groupby(['YEAR', 'RSSDID'], as_index=False)
     .agg(
         bank_weight_sum=('weight', 'sum'),
         bank_weighted_sum=('weighted_sophistication_component', 'sum'),
@@ -175,7 +175,7 @@ bank_agg['bank_weighted_sophistication_index'] = (
 # HHI_county = sum_banks ( (bank deposits in county / total county deposits)^2 ), on [0, 1].
 # 1) Sum branch deposits to bank-by-county totals
 county_bank = (
-    sod.groupby(['YEAR', 'fips', 'CERT'], as_index=False)['DEPSUMBR']
+    sod.groupby(['YEAR', 'fips', 'RSSDID'], as_index=False)['DEPSUMBR']
     .sum()
     .rename(columns={'DEPSUMBR': 'bank_county_deposits'})
 )
@@ -198,46 +198,46 @@ county_hhi = (
 # Bank-level exposure to county HHI: deposit-weighted average of county HHIs across a bank's footprint.
 # The weight per county is the bank's total branch-deposit share in that county (summing branch weights).
 bank_county_weight = (
-    sod.groupby(['YEAR', 'CERT', 'fips'], as_index=False)['weight']
+    sod.groupby(['YEAR', 'RSSDID', 'fips'], as_index=False)['weight']
     .sum()
     .rename(columns={'weight': 'bank_county_weight'})
 )
 bank_hhi = bank_county_weight.merge(county_hhi, on=['YEAR', 'fips'], how='left')
 bank_hhi['weighted_hhi_component'] = bank_hhi['bank_county_weight'] * bank_hhi['county_deposit_hhi']
 bank_hhi = (
-    bank_hhi.groupby(['YEAR', 'CERT'], as_index=False)
+    bank_hhi.groupby(['YEAR', 'RSSDID'], as_index=False)
     .agg(sum_w=('bank_county_weight', 'sum'), sum_ws=('weighted_hhi_component', 'sum'))
 )
 bank_hhi['bank_weighted_county_deposit_hhi'] = (
     bank_hhi['sum_ws'] / bank_hhi['sum_w']
 ).where(bank_hhi['sum_w'] > 0)
 
-# Build bank-level dataframe: one row per (YEAR, CERT), dropping branch-only columns.
+# Build bank-level dataframe: one row per (YEAR, RSSDID), dropping branch-only columns.
 # We keep the first occurrence for identifier columns (e.g., NAMEFULL, ASSET, BKCLASS, DEPDOM).
 # Any 'fips' retained here corresponds to one arbitrary branch row and is not bank-level.
 df_base = sod.drop(columns=['DEPSUMBR', 'weight'])
 df = (
-    df_base.sort_values(['YEAR', 'CERT'])
-    .drop_duplicates(['YEAR', 'CERT'])
+    df_base.sort_values(['YEAR', 'RSSDID'])
+    .drop_duplicates(['YEAR', 'RSSDID'])
 )
 df = df.merge(
-    bank_agg[['YEAR', 'CERT', 'bank_weighted_sophistication_index']],
-    on=['YEAR', 'CERT'],
+    bank_agg[['YEAR', 'RSSDID', 'bank_weighted_sophistication_index']],
+    on=['YEAR', 'RSSDID'],
     how='left'
 )
 df = df.merge(
-    bank_hhi[['YEAR', 'CERT', 'bank_weighted_county_deposit_hhi']],
-    on=['YEAR', 'CERT'],
+    bank_hhi[['YEAR', 'RSSDID', 'bank_weighted_county_deposit_hhi']],
+    on=['YEAR', 'RSSDID'],
     how='left'
 )
 df = df.merge(
-    branch_density_df[['YEAR', 'CERT', 'branch_density']],
-    on=['YEAR', 'CERT'],
+    branch_density_df[['YEAR', 'RSSDID', 'branch_density']],
+    on=['YEAR', 'RSSDID'],
     how='left'
 )
 df = df.merge(
-    division_pivot[['YEAR', 'CERT'] + list(DIVISION_CODE_MAP.values())],
-    on=['YEAR', 'CERT'],
+    division_pivot[['YEAR', 'RSSDID'] + list(DIVISION_CODE_MAP.values())],
+    on=['YEAR', 'RSSDID'],
     how='left'
 )
 
