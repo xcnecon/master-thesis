@@ -88,6 +88,66 @@ ivreghdfe d_total_loans ///
         absorb(bankid) ///
         cluster(bankid)
 
+* 5.1 Full sample
+ivreghdfe d_single_family_loans ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (d_interest_rate_on_deposit = zS_dffr) ///
+        if sample_stage2, ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* 5.2 Large banks only
+ivreghdfe d_single_family_loans ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (d_interest_rate_on_deposit = zS_dffr) ///
+        if sample_stage2 & large_bank == 1, ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* 5.3 Small banks only
+ivreghdfe d_single_family_loans ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (d_interest_rate_on_deposit = zS_dffr) ///
+        if sample_stage2 & large_bank == 0, ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* 5.1 Full sample
+ivreghdfe d_ci ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (d_interest_rate_on_deposit = zS_dffr) ///
+        if sample_stage2, ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* 5.2 Large banks only
+ivreghdfe d_ci ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (d_interest_rate_on_deposit = zS_dffr) ///
+        if sample_stage2 & large_bank == 1, ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* 5.3 Small banks only
+ivreghdfe d_ci ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (d_interest_rate_on_deposit = zS_dffr) ///
+        if sample_stage2 & large_bank == 0, ///
+        absorb(bankid) ///
+        cluster(bankid)
+
 *------------------------------------------------------
 * 6. Wrap up
 *------------------------------------------------------
