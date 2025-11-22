@@ -81,6 +81,17 @@ def main() -> None:
     df = df[df['is_commercial_bank'] == 1]
     df.drop(columns=['is_commercial_bank'], inplace=True)
     
+    # Generate lag-1 for all control variables (from controls.csv)
+    control_variables = [c for c in controls.columns if c not in ['rssd9001', 'rssd9999']]
+    control_variables = [c for c in control_variables if c in df.columns]
+    lagged_controls = df.groupby('Bank ID')[control_variables].shift(1)
+    lagged_controls.columns = [f"lag1_{c}" for c in control_variables]
+    df = pd.concat([df, lagged_controls], axis=1)
+    
+    # Keep only observations within the policy window
+    mask = (df['Date'] >= DATE_START) & (df['Date'] <= DATE_END)
+    df = df[mask]
+    
     # Count before winsorizing
     print('Bank-quarter before winsorizing: ', len(df))
     
@@ -106,8 +117,6 @@ def main() -> None:
     # Merge FFR and keep policy window
     ffr = pd.read_csv(FFR_CSV)
     df = df.merge(ffr, on=['Date'], how='left')
-    mask = (df['Date'] >= DATE_START) & (df['Date'] <= DATE_END)
-    df = df[mask]
 
     # Large bank indicator (size threshold)
     df['large_bank'] = np.where(df['ASSET'] > ASSET_LARGE_THRESHOLD, 1, 0)
@@ -124,6 +133,12 @@ def main() -> None:
 
     df['core_deposit_share'] = np.minimum(df['core_deposit_share'], 0.999)
 
+    # Drop contemporaneous control variables if still present
+    contemporaneous_controls = ['ROA', 'core_deposit_share', 'wholesale_share', 'asset_to_equity', 'log_asset']
+    to_drop = [c for c in contemporaneous_controls if c in df.columns]
+    if len(to_drop) > 0:
+        df.drop(columns=to_drop, inplace=True)
+    
     # Count after winsorizing
     print('Bank-quarter after winsorizing: ', len(df))
     print('Large bank: ', len(df[df['large_bank'] == 1]))
