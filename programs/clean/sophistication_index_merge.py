@@ -29,7 +29,6 @@ df['share_interest_z'] = (df['share_interest'] - df['share_interest'].mean()) / 
 df['refi_share_z'] = (df['refi_share'] - df['refi_share'].mean()) / df['refi_share'].std()
 
 FEATURE_COLUMNS = [
-    "median_hh_income_z",
     "share_ba_plus_z",
     "share_age_65plus_z",
     "share_internet_sub_z",

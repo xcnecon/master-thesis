@@ -23,12 +23,12 @@ OUTPUT_CSV = f"{WORK_DIR}/working_panel.csv"
 
 # Constants
 ASSET_LARGE_THRESHOLD = 1_000_000
-OUTLIER_Q_LOW = 0.005
-OUTLIER_Q_HIGH = 0.995
+OUTLIER_Q_LOW = 0.01
+OUTLIER_Q_HIGH = 0.99
 Z_LIMIT = 10
 COMMERCIAL_BKCLASS = {'N', 'NM', 'SM'}
 DATE_START = "2022-01-01"
-DATE_END = "2023-09-30"
+DATE_END = "2023-9-30"
 
 def main() -> None:
     # Load inputs
