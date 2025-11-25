@@ -130,6 +130,8 @@ branch_density_df['branch_density'] = np.where(
     np.nan,
 )
 
+branch_density_df['branch_density'] = np.log(branch_density_df['branch_density'] + 1)
+
 # Division deposit shares per bank-year: % of bank deposits in each census division (0–1).
 # We compute as sum(DEPSUMBR in division) / DEPDOM for the bank-year.
 division_deposits = (

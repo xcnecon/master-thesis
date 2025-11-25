@@ -52,9 +52,11 @@ def main() -> None:
     df.rename(columns={'rssd9001': 'Bank ID', 'rssd9999': 'Date'}, inplace=True)
     df.drop(columns=['rssd9050', 'rssdfininstfilingtype'], inplace=True)
 
-    # Keep observations with both rate series present
-    mask = ~df['interest_rate_on_deposit'].isna() & ~df['interest_rate_on_interest_bearing_deposit'].isna()
-    df = df[mask].copy()
+    # Build masks up-front (avoid sequential clipping)
+    mask_rates_present = (
+        ~df['interest_rate_on_deposit'].isna()
+        & ~df['interest_rate_on_interest_bearing_deposit'].isna()
+    )
 
     # Set missing deltas to zero (true zeros or missing changes)
     df['d_multifamily_loans'] = df['d_multifamily_loans'].fillna(0)
@@ -69,17 +71,14 @@ def main() -> None:
     df['small_buz_lending_flag_asof'] = np.where(last_flag.fillna(0) == 1, 1, 0)
     df.drop(columns=['small_buz_lending_flag'], inplace=True)
 
-    # Require instrument availability
-    mask = ~df['sophistication_index_z'].isna()
-    df = df[mask]
+    # Require instrument availability (mask only for now)
+    mask_instrument_available = ~df['sophistication_index_z'].isna()
 
     # Commercial bank flag based on BKCLASS
     # See FFIEC Call Report documentation for BKCLASS codes.
     df['is_commercial_bank'] = np.where(df['BKCLASS'].isin(COMMERCIAL_BKCLASS), 1, 0)
     df.drop(columns=['BKCLASS'], inplace=True)
-
-    df = df[df['is_commercial_bank'] == 1]
-    df.drop(columns=['is_commercial_bank'], inplace=True)
+    mask_commercial_bank = df['is_commercial_bank'] == 1
     
     # Generate lag-1 for all control variables (from controls.csv)
     control_variables = [c for c in controls.columns if c not in ['rssd9001', 'rssd9999']]
@@ -88,31 +87,47 @@ def main() -> None:
     lagged_controls.columns = [f"lag1_{c}" for c in control_variables]
     df = pd.concat([df, lagged_controls], axis=1)
     
-    # Keep only observations within the policy window
-    mask = (df['Date'] >= DATE_START) & (df['Date'] <= DATE_END)
-    df = df[mask]
+    # Policy window mask (do not filter yet)
+    mask_policy_window = (df['Date'] >= DATE_START) & (df['Date'] <= DATE_END)
+    
+    # Base mask used to compute quantiles and for reporting
+    base_mask = mask_rates_present & mask_instrument_available & mask_commercial_bank & mask_policy_window
     
     # Count before winsorizing
-    print('Bank-quarter before winsorizing: ', len(df))
+    print('Bank-quarter before winsorizing: ', int(base_mask.sum()))
     
     # Drop outliers in rate series using 0.5% / 99.5% thresholds
-    low_dep = df['interest_rate_on_deposit'].quantile(OUTLIER_Q_LOW)
-    high_dep = df['interest_rate_on_deposit'].quantile(OUTLIER_Q_HIGH)
-    low_ib = df['interest_rate_on_interest_bearing_deposit'].quantile(OUTLIER_Q_LOW)
-    high_ib = df['interest_rate_on_interest_bearing_deposit'].quantile(OUTLIER_Q_HIGH)
-    mask_rates = (
+    low_dep = df.loc[base_mask, 'interest_rate_on_deposit'].quantile(OUTLIER_Q_LOW)
+    high_dep = df.loc[base_mask, 'interest_rate_on_deposit'].quantile(OUTLIER_Q_HIGH)
+    low_ib = df.loc[base_mask, 'interest_rate_on_interest_bearing_deposit'].quantile(OUTLIER_Q_LOW)
+    high_ib = df.loc[base_mask, 'interest_rate_on_interest_bearing_deposit'].quantile(OUTLIER_Q_HIGH)
+    mask_rate_range = (
         (df['interest_rate_on_deposit'] >= low_dep) & (df['interest_rate_on_deposit'] <= high_dep) &
         (df['interest_rate_on_interest_bearing_deposit'] >= low_ib) & (df['interest_rate_on_interest_bearing_deposit'] <= high_ib)
     )
-    df = df[mask_rates].copy()
 
     # Keep z-scores strictly within [-Z_LIMIT, Z_LIMIT]
-    mask_z = (
+    mask_z_scores = (
         df['sophistication_index_z'].between(-Z_LIMIT, Z_LIMIT) &
         df['hhi_z'].between(-Z_LIMIT, Z_LIMIT) &
         df['branch_density_z'].between(-Z_LIMIT, Z_LIMIT)
     )
-    df = df[mask_z].copy()
+    
+    # Apply all masks at once
+    all_masks = base_mask & mask_rate_range & mask_z_scores
+    df = df[all_masks].copy()
+    df.drop(columns=['is_commercial_bank'], inplace=True)
+
+    # Bank-level flag: 1 if the bank is present in the first quarter of the sample
+    first_quarter_date = df['Date'].min()
+    df['in_first_quarter'] = (df.groupby('Bank ID')['Date'].transform('min') == first_quarter_date).astype(int)
+
+    # Cumulative changes in bank deposit rates, analogous to cum_d_ffr, only for banks in first quarter
+    df.sort_values(['Bank ID', 'Date'], inplace=True)
+    cum_dep = df.groupby('Bank ID')['d_interest_rate_on_deposit'].apply(lambda s: s.fillna(0).cumsum())
+    cum_ib = df.groupby('Bank ID')['d_interest_rate_on_interest_bearing_deposit'].apply(lambda s: s.fillna(0).cumsum())
+    df['cum_d_interest_rate_on_deposit'] = np.where(df['in_first_quarter'] == 1, cum_dep, np.nan)
+    df['cum_d_interest_rate_on_interest_bearing_deposit'] = np.where(df['in_first_quarter'] == 1, cum_ib, np.nan)
 
     # Merge FFR and keep policy window
     ffr = pd.read_csv(FFR_CSV)

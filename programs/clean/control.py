@@ -81,6 +81,7 @@ df = df.merge(
 )
 
 df['log_median_hh_income'] = np.log(df['deposit_weighted_median_hh_income'])
+df['log_median_hh_income_z'] = (df['log_median_hh_income'] - df['log_median_hh_income'].mean()) / df['log_median_hh_income'].std()
 df.drop(columns=['deposit_weighted_median_hh_income'], inplace=True)
 
 df.rename(columns={'deposit_weighted_metrobr': 'metro_dummy'}, inplace=True)

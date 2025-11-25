@@ -27,17 +27,6 @@ xtset bankid qdate
 * Keep 2022Q1–2023Q4 = hike + plateau window
 keep if inrange(qdate, tq(2022q1), tq(2023q4))
 
-*------------------------------------------------------
-* 2. Sample definition
-*------------------------------------------------------
-* Baseline sample: non-missing main variables and instrument
-gen byte sample_stage2 = !missing(d_total_loans, d_interest_rate_on_deposit, ///
-    lag1_roa, lag1_core_deposit_share, lag1_wholesale_share, ///
-    lag1_asset_to_equity, lag1_log_asset, ///
-    large_bank, zS_dffr, ///
-    ne, ma, ec, wc, sa, es, ws, mt, pc)
-
-label var sample_stage2 "=1 if observation used in Stage 2 IV regressions"
 
 *------------------------------------------------------
 * 3. Descriptive checks (optional)
@@ -59,202 +48,45 @@ log using "$result/stage2_results.log", text replace name(stage2)
 *------------------------------------------------------
 
 * 5.1 Full sample
-ivreghdfe d_total_loans ///
+ivreghdfe d_total_loans_not_for_sale ///
+		c.metro_dummy#c.d_ffr ///
+		c.log_median_hh_income_z#c.d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_interest_rate_on_deposit = zS_dffr) ///
-        if sample_stage2, ///
+        (d_interest_rate_on_interest_ = c.sophistication_index#c.d_ffr c.branch_density_z#c.d_ffr c.hhi_z#c.d_ffr), ///
         absorb(bankid) ///
         cluster(bankid)
-
-* 5.2 Large banks only
-ivreghdfe d_total_loans ///
+		
+ivreghdfe d_total_loans_not_for_sale ///
+		c.metro_dummy#c.d_ffr ///
+		c.log_median_hh_income_z#c.d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_interest_rate_on_deposit = zR_dffr) ///
-        if sample_stage2 & large_bank == 1, ///
+        (d_interest_rate_on_interest_bear = c.sophistication_index#c.d_ffr c.branch_density_z#c.d_ffr c.hhi_z#c.d_ffr), ///
         absorb(bankid) ///
         cluster(bankid)
 
-* 5.3 Small banks only
-ivreghdfe d_total_loans ///
+ivreghdfe d_total_loans_not_for_sale ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_interest_rate_on_deposit = zS_dffr) ///
-        if sample_stage2 & large_bank == 0, ///
+        (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr), ///
         absorb(bankid) ///
         cluster(bankid)
 
-* 5.1 Full sample
-ivreghdfe d_single_family_loans ///
+ivreghdfe d_total_loans_not_for_sale ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_interest_rate_on_deposit = zS_dffr) ///
-        if sample_stage2, ///
+        (cum_d_interest_rate_on_interest_ = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr), ///
         absorb(bankid) ///
         cluster(bankid)
-
-* 5.2 Large banks only
-ivreghdfe d_single_family_loans ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_interest_rate_on_deposit = zR_dffr) ///
-        if sample_stage2 & large_bank == 1, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* 5.3 Small banks only
-ivreghdfe d_single_family_loans ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_interest_rate_on_deposit = zS_dffr) ///
-        if sample_stage2 & large_bank == 0, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* 5.1 Full sample
-ivreghdfe d_ci ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_interest_rate_on_deposit = zS_dffr) ///
-        if sample_stage2, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* 5.2 Large banks only
-ivreghdfe d_ci ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_interest_rate_on_deposit = zR_dffr) ///
-        if sample_stage2 & large_bank == 1, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* 5.3 Small banks only
-ivreghdfe d_ci ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_interest_rate_on_deposit = zS_dffr) ///
-        if sample_stage2 & large_bank == 0, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-local controls lag1_roa lag1_core_deposit_share lag1_wholesale_share ///
-               lag1_asset_to_equity lag1_log_asset
-
-
-*------------------------------------------------------
-* 5b. IV regressions (+ lagged bank controls)
-*------------------------------------------------------
-
-* 5b.1 Full sample
-ivreghdfe d_total_loans ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        `controls' ///
-        (d_interest_rate_on_deposit = zS_dffr) ///
-        if sample_stage2, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* 5b.2 Large banks only
-ivreghdfe d_total_loans ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        `controls' ///
-        (d_interest_rate_on_deposit = zR_dffr) ///
-        if sample_stage2 & large_bank == 1, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* 5b.3 Small banks only
-ivreghdfe d_total_loans ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        `controls' ///
-        (d_interest_rate_on_deposit = zS_dffr) ///
-        if sample_stage2 & large_bank == 0, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* 5b.1 Full sample
-ivreghdfe d_single_family_loans ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        `controls' ///
-        (d_interest_rate_on_deposit = zS_dffr) ///
-        if sample_stage2, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* 5b.2 Large banks only
-ivreghdfe d_single_family_loans ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        `controls' ///
-        (d_interest_rate_on_deposit = zR_dffr) ///
-        if sample_stage2 & large_bank == 1, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* 5b.3 Small banks only
-ivreghdfe d_single_family_loans ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        `controls' ///
-        (d_interest_rate_on_deposit = zS_dffr) ///
-        if sample_stage2 & large_bank == 0, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* 5b.1 Full sample
-ivreghdfe d_ci ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        `controls' ///
-        (d_interest_rate_on_deposit = zS_dffr) ///
-        if sample_stage2, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* 5b.2 Large banks only
-ivreghdfe d_ci ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        `controls' ///
-        (d_interest_rate_on_deposit = zR_dffr) ///
-        if sample_stage2 & large_bank == 1, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* 5b.3 Small banks only
-ivreghdfe d_ci ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        `controls' ///
-        (d_interest_rate_on_deposit = zS_dffr) ///
-        if sample_stage2 & large_bank == 0, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
 
 *------------------------------------------------------
 * 6. Wrap up
