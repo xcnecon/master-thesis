@@ -8,6 +8,18 @@ def main() -> None:
     # Ensure time axis parses as datetime for correct ordering
     df['rssd9999'] = pd.to_datetime(df['rssd9999'], errors='coerce')
 
+    # Restrict analysis period to start at 2021-01-01
+    x_start = pd.Timestamp('2021-01-01')
+    x_end = pd.Timestamp('2024-12-31')
+    df = df[(df['rssd9999'] >= x_start) & (df['rssd9999'] <= x_end)].copy()
+
+    # Load FFR upper limit daily series (percent to decimal) and align to start date only
+    ffr = pd.read_csv("data/raw/ffr_upper_limit.csv")
+    ffr['date'] = pd.to_datetime(ffr['date'], errors='coerce')
+    ffr['ffr_upper'] = pd.to_numeric(ffr['ffr_upper'], errors='coerce') / 100.0
+    ffr = ffr[ffr['date'] >= x_start].copy()
+    ffr.sort_values('date', inplace=True)
+
     # Aggregate (sum interest / sum deposits) to reduce outliers
     # Reconstruct total interest from rates and averages to avoid carrying raw interest column
     df['_implied_interest'] = (df['interest_rate_on_deposit'] * df['average_deposit']) / 4
@@ -38,31 +50,50 @@ def main() -> None:
     ts_simple_w = per_bank_w.groupby('rssd9999', as_index=False).mean(numeric_only=True)
     ts_simple_w.sort_values('rssd9999', inplace=True)
 
+    # Determine deposit series end date and clip FFR to the same period
+    deposit_end = max(ts_weighted['rssd9999'].max(), ts_simple_w['rssd9999'].max())
+    ffr = ffr[ffr['date'] <= deposit_end].copy()
+
+    # Determine x-axis end after preparing series (match deposit end)
+    x_end = deposit_end
+
     # Plot
     fig, axes = plt.subplots(1, 2, figsize=(14, 5), sharex=True, sharey=True)
 
+    # Shading period: 2022Q1 to 2023Q3
+    shade_start = pd.Timestamp('2022-03-31')  # quarter end for Q1 2022
+    shade_end = pd.Timestamp('2023-09-30')    # quarter end for Q3 2023
+
     # Left: weighted aggregate
-    axes[0].plot(ts_weighted['rssd9999'], ts_weighted['weighted_interest_rate_on_deposit'], label='Weighted: all deposits')
-    axes[0].plot(ts_weighted['rssd9999'], ts_weighted['weighted_interest_rate_on_interest_bearing_deposit'], label='Weighted: interest-bearing')
+    axes[0].plot(ts_weighted['rssd9999'], ts_weighted['weighted_interest_rate_on_deposit'], label='All deposits')
+    axes[0].plot(ts_weighted['rssd9999'], ts_weighted['weighted_interest_rate_on_interest_bearing_deposit'], label='Interest-bearing deposits')
+    axes[0].plot(ffr['date'], ffr['ffr_upper'], label='FFR upper limit', color='black', linestyle='--', alpha=0.8)
+    axes[0].axvspan(shade_start, shade_end, color='gray', alpha=0.15, label='2022Q1–2023Q3')
     axes[0].set_title('Aggregate (sum interest / sum deposits)')
     axes[0].set_xlabel('Date')
     axes[0].set_ylabel('Annualized rate')
     axes[0].grid(True, alpha=0.3)
-    axes[0].legend()
+    axes[0].legend(loc='upper left')
 
     # Right: winsorized simple average across banks
-    axes[1].plot(ts_simple_w['rssd9999'], ts_simple_w['interest_rate_on_deposit'], label='Winsorized simple avg: all deposits')
-    axes[1].plot(ts_simple_w['rssd9999'], ts_simple_w['interest_rate_on_interest_bearing_deposit'], label='Winsorized simple avg: interest-bearing')
+    axes[1].plot(ts_simple_w['rssd9999'], ts_simple_w['interest_rate_on_deposit'], label='All deposits')
+    axes[1].plot(ts_simple_w['rssd9999'], ts_simple_w['interest_rate_on_interest_bearing_deposit'], label='Interest-bearing deposits')
+    axes[1].plot(ffr['date'], ffr['ffr_upper'], label='FFR upper limit', color='black', linestyle='--', alpha=0.8)
+    axes[1].axvspan(shade_start, shade_end, color='gray', alpha=0.15, label='2022Q1–2023Q3')
     axes[1].set_title('Winsorized simple average across banks')
     axes[1].set_xlabel('Date')
     axes[1].set_ylabel('Annualized rate')
     axes[1].tick_params(axis='y', labelleft=True)
     axes[1].grid(True, alpha=0.3)
-    axes[1].legend()
+    axes[1].legend(loc='upper left')
 
-    fig.suptitle('Deposit interest rates over time')
+    # Apply consistent x-limits after plotting to avoid reversed axis
+    for ax in axes:
+        ax.set_xlim(x_start, x_end)
+
+    fig.suptitle('Effective Deposit interest rates over time')
     fig.tight_layout()
-    fig.savefig("data/processed/deposit_interest_rates_timeseries_combined.png", dpi=150)
+    fig.savefig("results/deposit_interest_rates_timeseries_combined.png", dpi=150)
 
 
 if __name__ == "__main__":
