@@ -28,7 +28,7 @@ else:
     top_decile_share = np.nan
 
 # Counts above and below threshold
-threshold = 1_000_000
+threshold = 10_000_000
 num_above = int((assets > threshold).sum())
 num_below = int((assets < threshold).sum())
 

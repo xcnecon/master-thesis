@@ -22,7 +22,7 @@ CONTROLS_CSV = f"{PROC_DIR}/controls.csv"
 OUTPUT_CSV = f"{WORK_DIR}/working_panel.csv"
 
 # Constants
-ASSET_LARGE_THRESHOLD = 1_000_000
+ASSET_LARGE_THRESHOLD = 10_000_000
 OUTLIER_Q_LOW = 0.01
 OUTLIER_Q_HIGH = 0.99
 Z_LIMIT = 10
@@ -37,7 +37,7 @@ def main() -> None:
     instruments = pd.read_csv(INSTRUMENTS_CSV)
     controls = pd.read_csv(
         CONTROLS_CSV,
-        usecols=['rssd9001', 'rssd9999', 'metro_dummy', 'log_median_hh_income']
+        usecols=['rssd9001', 'rssd9999', 'metro_dummy', 'log_median_hh_income_z']
     )  # only needed fields
 
     # Merge core inputs
@@ -168,6 +168,14 @@ def main() -> None:
     cum_ib = df.groupby('Bank ID')['d_interest_rate_on_interest_bearing_deposit'].apply(lambda s: s.fillna(0).cumsum())
     df['cum_d_interest_rate_on_deposit'] = np.where(df['in_first_quarter'] == 1, cum_dep, np.nan)
     df['cum_d_interest_rate_on_interest_bearing_deposit'] = np.where(df['in_first_quarter'] == 1, cum_ib, np.nan)
+    
+    # Cumulative changes in deposit quantities (levels expressed as cumulative growth)
+    cum_avg_dep = df.groupby('Bank ID')['d_average_deposit'].apply(lambda s: s.fillna(0).cumsum())
+    cum_avg_ib = df.groupby('Bank ID')['d_average_interest_bearing_deposit'].apply(lambda s: s.fillna(0).cumsum())
+    cum_core_dep = df.groupby('Bank ID')['d_core_deposit'].apply(lambda s: s.fillna(0).cumsum())
+    df['cum_d_average_deposit'] = np.where(df['in_first_quarter'] == 1, cum_avg_dep, np.nan)
+    df['cum_d_average_interest_bearing_deposit'] = np.where(df['in_first_quarter'] == 1, cum_avg_ib, np.nan)
+    df['cum_d_core_deposit'] = np.where(df['in_first_quarter'] == 1, cum_core_dep, np.nan)
 
     # Merge FFR and keep policy window
     ffr = pd.read_csv(FFR_CSV)

@@ -178,8 +178,7 @@ The coefficient $\theta^k$ is interpreted as the effect of a policy-induced cumu
 
 # Results
 ## Summary statistics
-The empirical analysis draws on a cross-section of 4,075 commercial banks observed in 2022Q1, the quarter immediately preceding the onset of the tightening cycle. Banks in the sample are predominantly small and community institutions: the median bank reports $288 million in assets, compared with a mean of $3.3 billion. Asset size is highly skewed, with the largest decile of banks accounting for 89.4 percent of total system assets. Only 739 banks hold more than $1 billion in assets, while 3,336 banks fall below this threshold. Using the $10 billion cutoff commonly employed in the literature, the vast majority of institutions are classified as small banks. This size distribution ensures that the panel captures the segment of the banking sector most 
-exposed to deposit-franchise considerations and most relevant for heterogeneity in deposit-rate passthrough.
+The empirical analysis draws on a cross-section of 4,075 commercial banks observed in 2022Q1, the quarter immediately preceding the onset of the tightening cycle. Banks in the sample are predominantly small and community institutions: the median bank reports $288 million in assets, compared with a mean of $3.31 billion. Asset size is highly skewed, with the largest decile of banks accounting for 89.40 percent of total system assets. Using the $10 billion size threshold commonly employed in the literature, only 106 banks qualify as large institutions, while 3,969 banks fall below this cutoff. This size distribution ensures that the cross-section captures the segment of the banking sector most exposed to deposit-franchise considerations and most relevant for heterogeneity in deposit-rate passthrough.
 
 :::{#fig-deposit-rates}
 ![](../results/deposit_interest_rates_timeseries_combined.png){fig-align="center" fig-width=100%}
@@ -208,10 +207,21 @@ Summary Statistics - Instruments and Selected Controls
 Summary Statistics - Deposit and Loan Growth
 :::
 
-
 ## First-stage regressions
 
+:::{#tbl-first-stage-deposit-rates}
+{{< include ../results/first_stage_deposit_rates.txt >}}
+
+*Notes*: Coefficients shown with clustered standard errors in parentheses. \*, \**, \*** denote p < 0.10, 0.05, 0.01 respectively. "cum ΔFFR" is the cumulative change in the federal funds rate since 2021Q4. Columns (2) and (4) restrict the sample to small banks. All specifications absorb bank fixed effects and quarter fixed effects, and include deposit-weighted Census region × quarter interactions. Dependent variables are cumulative changes in effective deposit rates: all deposits in columns (1)–(2); interest-bearing deposits in columns (3)–(4).
+
+First-stage regressions for cumulative deposit rates
+:::
+
+
 ## Second-stage regressions
+
+# Robustness checks
+
 
 # Appendix 
 
