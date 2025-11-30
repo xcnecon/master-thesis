@@ -1,5 +1,3 @@
-Summary statistics for 2022Q1 cross-section
-
 | Variable | mean | std | min | 25% | 75% | max |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
 | zS | -0.079 | 0.973 | -2.951 | -0.729 | 0.563 | 3.032 |

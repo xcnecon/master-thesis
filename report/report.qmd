@@ -184,24 +184,45 @@ exposed to deposit-franchise considerations and most relevant for heterogeneity 
 :::{#fig-deposit-rates}
 ![](../results/deposit_interest_rates_timeseries_combined.png){fig-align="center" fig-width=100%}
 
-Notes: The left panel shows aggregate deposit-weighted effective rates; the right panel shows winsorized simple averages across banks (0.5–99.5%). The shaded region marks 2022Q1–2023Q3.
+*Notes*: The left panel shows aggregate deposit-weighted effective rates; the right panel shows winsorized simple averages across banks (0.5–99.5%). The shaded region marks 2022Q1–2023Q3.
 
 Deposit Rates and Policy Shocks
 :::
 
-Figure 1 reports summary statistics for effective deposit rates and the associated monetary-policy shock over the 2022–2023 tightening cycle. The federal funds rate rose by roughly 525 basis points between 2022Q1 and 2023Q3, while the effective deposit rate on all domestic deposits increased much more gradually, from near-zero levels to approximately 2.3 percent by late 2023. Interest-bearing deposits adjusted more quickly, rising to about 3.0 percent over the same period, but still remained well below the policy rate. The cumulative changes reported in Figure 1 highlight both the magnitude of the common policy shock and the substantial sluggishness and incompleteness of deposit-rate pass-through. These patterns motivate the use of cumulative deposit-rate changes as the key endogenous funding-cost variable in the empirical analysis.
+@fig-deposit-rates reports summary statistics for effective deposit rates and the associated monetary-policy shock over the 2022–2023 tightening cycle. The federal funds rate rose by roughly 525 basis points between 2022Q1 and 2023Q3, while the effective deposit rate on all domestic deposits increased much more gradually, from near-zero levels to approximately 2.3 percent by late 2023. Interest-bearing deposits adjusted more quickly, rising to about 3.0 percent over the same period, but still remained well below the policy rate. The cumulative changes reported in @fig-deposit-rates highlight both the magnitude of the common policy shock and the substantial sluggishness and incompleteness of deposit-rate pass-through. These patterns motivate the use of cumulative deposit-rate changes as the key endogenous funding-cost variable in the empirical analysis.
 
 :::{#tbl-summary-statistics}
 
 {{< include ../results/table_2.txt >}}
 
-Notes: This table reports summary statistics for the cross-sectional exposure indices and selected controls for the 2022Q1 cross-section. Z scores are clipped at +/- 10. 
+@tbl-summary-statistics reports summary statistics for the cross-sectional exposure indices and selected controls for the 2022Q1 cross-section. zS is the depositor sophistication index, zR is the branch intensity index, zH is the local concentration index, Metropolitan dummy is a dummy variable for whether a bank is located in a metropolitan area, and zY is the deposit-weighted log median household income. Z scores are clipped at +/- 10. 
 
 Summary Statistics - Instruments and Selected Controls
 :::
 
+:::{#tbl-summary-statistics-growth}
+{{< include ../results/table_growth.txt >}}
+
+@tbl-summary-statistics-growth reports summary statistics for the deposit and loan growth rates from 2022Q1 to 2023Q3. All growth rates are expressed as quarter-on-quarter changes, and winsorized at the 0.5th and 99.5th percentiles. gDep is the growth rate of all deposits, gIBDep is the growth rate of interest-bearing deposits, gCoreDep is the growth rate of core deposits which includes demand deposits, saving deposits MMDAs, and small time deposits under 250K USD, gTotalLoans is the growth rate of total loans, gLoansNotForSale is the growth rate of loans not for sale, gSingleFamilyMortgages is the growth rate of 1-4 family mortgages, and gC&ILoans is the growth rate of commercial and industrial loans.
+
+Summary Statistics - Deposit and Loan Growth
+:::
+
+
 ## First-stage regressions
 
+## Second-stage regressions
 
+# Appendix 
+
+## Appendix 1: Principal Component Analysis
+
+:::{#tbl-pca-results}
+{{< include ../results/sophistication_index_pca_loadings.txt >}}
+
+Principal Component Analysis Loadings
+:::
+
+@tbl-pca-results reports the loadings of the principal component analysis. The first principal component is considered as the depositor sophistication index, which explains 51.8% of the variance in the county-level data. 
 
 # References

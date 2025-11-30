@@ -88,7 +88,6 @@ if len(summary_rows) > 0:
     os.makedirs("results", exist_ok=True)
     output_path = os.path.join("results", "table_2.txt")
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write("Summary statistics for 2022Q1 cross-section\n\n")
         # Write Markdown header for Quarto compatibility
         f.write("| Variable | mean | std | min | 25% | 75% | max |\n")
         f.write("|---|:---:|:---:|:---:|:---:|:---:|:---:|\n")
@@ -104,13 +103,13 @@ if len(summary_rows) > 0:
 
 # Summary statistics for 2022Q1 cross-section: deposit and loan growth
 growth_vars = {
-    "All deposits (growth)": "d_average_deposit",
-    "Interest-bearing deposits (growth)": "d_average_interest_bearing_deposit",
-    "Core deposits (growth)": "d_core_deposit",
-    "Total loans (growth)": "d_total_loans",
-    "Loans not for sale (growth)": "d_total_loans_not_for_sale",
-    "Single-family mortgages (growth)": "d_single_family_loans",
-    "C&I loans (growth)": "d_C&I",
+    "gDep": "d_average_deposit",
+    "gIBDep": "d_average_interest_bearing_deposit",
+    "gCoreDep": "d_core_deposit",
+    "gTotalLoans": "d_total_loans",
+    "gLoansNotForSale": "d_total_loans_not_for_sale",
+    "gSingleFamilyMortgages": "d_single_family_loans",
+    "gC&ILoans": "d_C&I",
 }
 
 growth_rows = []
@@ -141,7 +140,6 @@ if len(growth_rows) > 0:
     os.makedirs("results", exist_ok=True)
     output_path_growth = os.path.join("results", "table_growth.txt")
     with open(output_path_growth, "w", encoding="utf-8") as f:
-        f.write("Summary statistics for 2022Q1 cross-section: deposit and loan growth\n\n")
         # Write Markdown header
         f.write("| Variable | mean | std | min | 25% | 75% | max |\n")
         f.write("|---|:---:|:---:|:---:|:---:|:---:|:---:|\n")
