@@ -12,6 +12,7 @@ format:
     number-sections: true
     pdf-engine: xelatex
     fontsize: 12pt
+    appendices: true
 ---
 
 # Introduction
@@ -177,6 +178,27 @@ The coefficient $\theta^k$ is interpreted as the effect of a policy-induced cumu
 
 # Results
 ## Summary statistics
+The empirical analysis draws on a cross-section of 4,075 commercial banks observed in 2022Q1, the quarter immediately preceding the onset of the tightening cycle. Banks in the sample are predominantly small and community institutions: the median bank reports $288 million in assets, compared with a mean of $3.3 billion. Asset size is highly skewed, with the largest decile of banks accounting for 89.4 percent of total system assets. Only 739 banks hold more than $1 billion in assets, while 3,336 banks fall below this threshold. Using the $10 billion cutoff commonly employed in the literature, the vast majority of institutions are classified as small banks. This size distribution ensures that the panel captures the segment of the banking sector most 
+exposed to deposit-franchise considerations and most relevant for heterogeneity in deposit-rate passthrough.
+
+:::{#fig-deposit-rates}
+![](../results/deposit_interest_rates_timeseries_combined.png){fig-align="center" fig-width=100%}
+
+Notes: The left panel shows aggregate deposit-weighted effective rates; the right panel shows winsorized simple averages across banks (0.5–99.5%). The shaded region marks 2022Q1–2023Q3.
+
+Deposit Rates and Policy Shocks
+:::
+
+Figure 1 reports summary statistics for effective deposit rates and the associated monetary-policy shock over the 2022–2023 tightening cycle. The federal funds rate rose by roughly 525 basis points between 2022Q1 and 2023Q3, while the effective deposit rate on all domestic deposits increased much more gradually, from near-zero levels to approximately 2.3 percent by late 2023. Interest-bearing deposits adjusted more quickly, rising to about 3.0 percent over the same period, but still remained well below the policy rate. The cumulative changes reported in Figure 1 highlight both the magnitude of the common policy shock and the substantial sluggishness and incompleteness of deposit-rate pass-through. These patterns motivate the use of cumulative deposit-rate changes as the key endogenous funding-cost variable in the empirical analysis.
+
+:::{#tbl-summary-statistics}
+
+{{< include ../results/table_2.txt >}}
+
+Notes: This table reports summary statistics for the cross-sectional exposure indices and selected controls for the 2022Q1 cross-section. Z scores are clipped at +/- 10. 
+
+Summary Statistics - Instruments and Selected Controls
+:::
 
 ## First-stage regressions
 

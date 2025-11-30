@@ -109,6 +109,43 @@ def main() -> None:
         (df['interest_rate_on_interest_bearing_deposit'] >= low_ib) & (df['interest_rate_on_interest_bearing_deposit'] <= high_ib)
     )
 
+    # Diagnostics: how many rows would be dropped by the rate-series filter
+    base_count = int(base_mask.sum())
+    dep_outside = (
+        (df.loc[base_mask, 'interest_rate_on_deposit'] < low_dep) |
+        (df.loc[base_mask, 'interest_rate_on_deposit'] > high_dep)
+    )
+    ib_outside = (
+        (df.loc[base_mask, 'interest_rate_on_interest_bearing_deposit'] < low_ib) |
+        (df.loc[base_mask, 'interest_rate_on_interest_bearing_deposit'] > high_ib)
+    )
+    union_outside = dep_outside | ib_outside
+    print('Outliers at 0.5–99.5% - interest_rate_on_deposit:', int(dep_outside.sum()))
+    print('Outliers at 0.5–99.5% - interest_rate_on_interest_bearing_deposit:', int(ib_outside.sum()))
+    print('Rows dropped due to rate-series filter (union):', int(union_outside.sum()))
+
+    # Winsorize deposit and loan growth variables at 0.5% / 99.5%
+    winsor_vars = [
+        'd_average_deposit',
+        'd_average_interest_bearing_deposit',
+        'd_core_deposit',
+        'd_total_loans',
+        'd_total_loans_not_for_sale',
+        'd_single_family_loans',
+        'd_C&I',
+    ]
+    for col in winsor_vars:
+        if col in df.columns:
+            series_in_sample = df.loc[base_mask, col].dropna()
+            if series_in_sample.empty:
+                continue
+            low_q = series_in_sample.quantile(0.005)
+            high_q = series_in_sample.quantile(0.995)
+            num_below = int((series_in_sample < low_q).sum())
+            num_above = int((series_in_sample > high_q).sum())
+            print(f'Winsorizing {col} at 0.5–99.5%: clipped below={num_below}, above={num_above}, total={num_below + num_above} (rows lost: 0)')
+            df[col] = df[col].clip(lower=low_q, upper=high_q)
+
     # Keep z-scores strictly within [-Z_LIMIT, Z_LIMIT]
     mask_z_scores = (
         df['sophistication_index_z'].between(-Z_LIMIT, Z_LIMIT) &
@@ -138,7 +175,6 @@ def main() -> None:
 
     # Large bank indicator (size threshold)
     df['large_bank'] = np.where(df['ASSET'] > ASSET_LARGE_THRESHOLD, 1, 0)
-    df.drop(columns=['ASSET'], inplace=True)
 
     # # Winsorize ROA and asset_to_equity at 0.5% / 99.5%; cap core_deposit_share below 1 - disabled
     # low_roa = df['ROA'].quantile(OUTLIER_Q_LOW)

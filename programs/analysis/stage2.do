@@ -49,28 +49,8 @@ log using "$result/stage2_results.log", text replace name(stage2)
 
 * 5.1 Full sample
 ivreghdfe d_total_loans_not_for_sale ///
-		c.metro_dummy#c.d_ffr ///
-		c.log_median_hh_income_z#c.d_ffr ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_interest_rate_on_interest_ = c.sophistication_index#c.d_ffr c.branch_density_z#c.d_ffr c.hhi_z#c.d_ffr), ///
-        absorb(bankid) ///
-        cluster(bankid)
-		
-ivreghdfe d_total_loans_not_for_sale ///
-		c.metro_dummy#c.d_ffr ///
-		c.log_median_hh_income_z#c.d_ffr ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_interest_rate_on_interest_bear = c.sophistication_index#c.d_ffr c.branch_density_z#c.d_ffr c.hhi_z#c.d_ffr), ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-ivreghdfe d_total_loans_not_for_sale ///
 		c.metro_dummy#c.cum_d_ffr ///
-		c.log_median_hh_income_z#c.cum_d_ffr ///
+		c.log_median_hh_income#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
@@ -80,7 +60,7 @@ ivreghdfe d_total_loans_not_for_sale ///
 
 ivreghdfe d_total_loans_not_for_sale ///
 		c.metro_dummy#c.cum_d_ffr ///
-		c.log_median_hh_income_z#c.cum_d_ffr ///
+		c.log_median_hh_income#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
