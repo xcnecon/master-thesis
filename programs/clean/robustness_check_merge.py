@@ -83,6 +83,13 @@ def main() -> None:
     df.drop(columns=['BKCLASS'], inplace=True)
     mask_commercial_bank = df['is_commercial_bank'] == 1
     
+    # # Generate lag-1 for all control variables (from controls.csv) - disabled
+    # control_variables = [c for c in controls.columns if c not in ['rssd9001', 'rssd9999']]
+    # control_variables = [c for c in control_variables if c in df.columns]
+    # lagged_controls = df.groupby('Bank ID')[control_variables].shift(1)
+    # lagged_controls.columns = [f"lag1_{c}" for c in control_variables]
+    # df = pd.concat([df, lagged_controls], axis=1)
+    
     # Policy window mask (do not filter yet)
     mask_policy_window = (df['Date'] >= DATE_START) & (df['Date'] <= DATE_END)
     
@@ -176,6 +183,23 @@ def main() -> None:
 
     # Large bank indicator (size threshold)
     df['large_bank'] = np.where(df['ASSET'] > ASSET_LARGE_THRESHOLD, 1, 0)
+
+    # # Winsorize ROA and asset_to_equity at 0.5% / 99.5%; cap core_deposit_share below 1 - disabled
+    # low_roa = df['ROA'].quantile(OUTLIER_Q_LOW)
+    # high_roa = df['ROA'].quantile(OUTLIER_Q_HIGH)
+    # df['ROA'] = df['ROA'].clip(lower=low_roa, upper=high_roa)
+
+    # low_ae = df['asset_to_equity'].quantile(OUTLIER_Q_LOW)
+    # high_ae = df['asset_to_equity'].quantile(OUTLIER_Q_HIGH)
+    # df['asset_to_equity'] = df['asset_to_equity'].clip(lower=low_ae, upper=high_ae)
+
+    # df['core_deposit_share'] = np.minimum(df['core_deposit_share'], 0.999)
+
+    # # Drop contemporaneous control variables if still present - disabled
+    # contemporaneous_controls = ['ROA', 'core_deposit_share', 'wholesale_share', 'asset_to_equity', 'log_asset']
+    # to_drop = [c for c in contemporaneous_controls if c in df.columns]
+    # if len(to_drop) > 0:
+    #     df.drop(columns=to_drop, inplace=True)
     
     # Count after winsorizing
     print('Bank-quarter after winsorizing: ', len(df))

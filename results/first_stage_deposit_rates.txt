@@ -15,6 +15,7 @@
 |Observations | 31,294 | 25,746 | 31,294 | 25,746 |
 |Clusters     | 4,050 | 3,317 | 4,050 | 3,317 |
 |Within R-sq. | 0.824 | 0.833 | 0.847 | 0.833 |
+|Joint F (zS = zR = zH = 0) | 178.24 | 145.97 | 151.60 | 148.28 |
 |Bank FE | Yes | Yes | Yes | Yes |
 |Quarter FE | Yes | Yes | Yes | Yes |
 |Region × Quarter controls | Yes | Yes | Yes | Yes |

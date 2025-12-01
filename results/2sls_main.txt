@@ -1,0 +1,14 @@
+|  | (1) | (2) | (3) | (4) |
+|----------|:---:|:---:|:---:|:---:|
+|Dependent variable | Total loans | Total loans | Loans not for sale | Loans not for sale |
+|Sample | All banks | Small banks | All banks | Small banks |
+|cum ΔDeposit rate | -0.976534*** | -0.846971* | -0.867804** | -0.863753** |
+| | (0.374383) | (0.435225) | (0.349937) | (0.408874) |
+|Observations | 31,294 | 30,540 | 31,294 | 30,540 |
+|Clusters     | 4,050 | 3,946 | 4,050 | 3,946 |
+|Centered R-sq. | 0.0928 | 0.0935 | 0.0978 | 0.0981 |
+|KP rk Wald F | 178.190 | 145.929 | 178.190 | 145.929 |
+|Bank FE | Yes | Yes | Yes | Yes |
+|Quarter FE | Yes | Yes | Yes | Yes |
+|Region × Quarter controls | Yes | Yes | Yes | Yes |
+|SEs clustered by | Bank | Bank | Bank | Bank |
