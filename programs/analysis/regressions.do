@@ -4,10 +4,22 @@ global result "$root/results"
 global working "$data/working"
 
 *******************************************************
-* Combined Stage 1 + Stage 2 analysis
-*  - Stage 1: Pass-through to deposit rates and quantities
-*  - Stage 2: Effect of deposit rate changes on loan growth (IV)
-*  - Keep a single log file
+* Combined Stage 1 + Stage 2 analysis (master do-file)
+* Purpose:
+*  - Stage 1: Estimate pass-through of policy (cum ΔFFR) to banks'
+*    deposit rates and deposit quantities.
+*  - Stage 2: IV effect of cum ΔDeposit rate on loan growth.
+* Identification:
+*  - Instruments = sophistication (zS), branch density (zR), market
+*    concentration (zH) interacted with cum ΔFFR (policy slope shifters).
+*  - Fixed effects: bank FE; time FE: quarter FE.
+*  - Region×Quarter controls: deposit-weighted region shares × quarter FE
+*    (PC omitted). Controls absorb geography-time demand/supply shifts.
+* Sample window:
+*  - 2022q1–2023q4 (hike + plateau). We report all banks and small banks
+*    (large_bank==0) specifications.
+* Output:
+*  - Single text log at results/regressions_results.log
 *******************************************************
 
 clear all
@@ -15,6 +27,8 @@ set more off
 
 *------------------------------------------------------
 * 0. Dependencies
+*  - Ensure packages are installed only if missing.
+*  - ivreghdfe relies on ivreg2 and ranktest for weak-ID tests.
 *------------------------------------------------------
 cap which reghdfe
 if _rc {
@@ -34,6 +48,8 @@ mata: mata mlib index
 *------------------------------------------------------
 * 1. Import data and build panel
 *------------------------------------------------------
+* Load pre-built working panel; read all columns as strings to avoid
+* locale-dependent type guessing. We explicitly destring below.
 import delimited "$working/working_panel.csv", clear varnames(1) stringcols(_all)
 
 * Convert all non-date variables from string to numeric when possible
@@ -41,11 +57,12 @@ ds date, not
 local vars_nodate `r(varlist)'
 capture destring `vars_nodate', replace ignore(",")
 
-* Convert Date (string) to daily date; adjust "YMD" if your format differs
+* Convert string 'date' to Stata daily, then quarterly date used for FE.
+* Adjust "YMD" if the raw format differs
 gen float date_d = daily(date, "YMD")
 format date_d %td
 
-* Quarterly date
+* Quarterly date key
 gen qdate = qofd(date_d)
 format qdate %tq
 
@@ -59,6 +76,7 @@ if _rc {
 }
 
 * Recast all numeric variables (including dates and ids) to float
+* (saves memory and yields consistent storage types)
 ds, has(type numeric)
 recast float `r(varlist)'
 
@@ -70,9 +88,8 @@ keep if inrange(qdate, tq(2022q1), tq(2023q4))
 *------------------------------------------------------
 * 2. Define analysis sample for Stage 1
 *------------------------------------------------------
-gen byte sample_stage1 = ///
-    !missing(d_interest_rate_on_deposit, d_ffr, ///
-             ne, ma, ec, wc, sa, es, ws, mt, pc)
+* Require non-missing outcomes, policy shock, and region-share controls.
+* Interactions with i.qdate are formed later; PC share is omitted.
 
 *------------------------------------------------------
 * 3. Open single results log
@@ -84,10 +101,13 @@ log using "$result/regressions_results.log", text replace name(combined)
 *------------------------------------------------------
 * 4. Stage-1 regressions
 *  - Outcomes: deposit rate changes and deposit quantities
-*  - Bank FE via absorb(bankid), Quarter FE i.qdate
-*  - Deposit-weighted region×quarter: c.<region_share>#i.qdate (PC omitted)
+*  - Bank FE via absorb(bankid); Quarter FE: i.qdate
+*  - Region×Quarter controls: c.<region_share>#i.qdate (PC omitted)
+*  - Policy slope shifters: c.<shifter>#c.cum_d_ffr with shifters {zS, zR, zH}
+*  - We report joint F-tests for {zS, zR, zH}×cum ΔFFR
 *------------------------------------------------------
 // Outcome: cum_d_interest_rate_on_deposit
+* All banks
 reghdfe cum_d_interest_rate_on_deposit ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
@@ -97,12 +117,14 @@ reghdfe cum_d_interest_rate_on_deposit ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        if sample_stage1, ///
+        , ///
         absorb(bankid) ///
         cluster(bankid)
 
+* Joint significance of {zS, zR, zH}×cum ΔFFR
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 		
+* Small banks
 reghdfe cum_d_interest_rate_on_deposit ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
@@ -112,12 +134,14 @@ reghdfe cum_d_interest_rate_on_deposit ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        if sample_stage1 & large_bank==0, ///
+        if large_bank==0, ///
         absorb(bankid) ///
         cluster(bankid)
 
+* Joint significance of {zS, zR, zH}×cum ΔFFR
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
+* All banks
 reghdfe cum_d_interest_rate_on_interest_ ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
@@ -127,12 +151,14 @@ reghdfe cum_d_interest_rate_on_interest_ ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        if sample_stage1, ///
+        , ///
         absorb(bankid) ///
         cluster(bankid)
 
+* Joint significance of {zS, zR, zH}×cum ΔFFR
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 		
+* Small banks
 reghdfe cum_d_interest_rate_on_interest_ ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
@@ -142,14 +168,50 @@ reghdfe cum_d_interest_rate_on_interest_ ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        if sample_stage1 & large_bank==0, ///
+        if large_bank==0, ///
         absorb(bankid) ///
         cluster(bankid)
 
+* Joint significance of {zS, zR, zH}×cum ΔFFR
+test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
+
+* Outcome: d_average_interest_bearing_depos
+* All banks
+reghdfe d_average_interest_bearing_depos ///
+        c.sophistication_index#c.cum_d_ffr ///
+		c.branch_density_z#c.cum_d_ffr ///
+		c.hhi_z#c.cum_d_ffr ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        , ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* Joint significance of {zS, zR, zH}×cum ΔFFR
+test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
+
+* Small banks
+reghdfe d_average_interest_bearing_depos ///
+        c.sophistication_index#c.cum_d_ffr ///
+		c.branch_density_z#c.cum_d_ffr ///
+		c.hhi_z#c.cum_d_ffr ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        if large_bank==0, ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* Joint significance of {zS, zR, zH}×cum ΔFFR
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
 * Outcome: d_average_deposit
-reghdfe d_average_deposit ///
+reghdfe d_average_interest_bearing_depos ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
@@ -158,13 +220,13 @@ reghdfe d_average_deposit ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        if sample_stage1, ///
+        , ///
         absorb(bankid) ///
         cluster(bankid)
 
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
-reghdfe d_average_deposit ///
+reghdfe d_average_interest_bearing_depos ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
@@ -173,15 +235,13 @@ reghdfe d_average_deposit ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        if sample_stage1 & large_bank==0, ///
+        if large_bank==0, ///
         absorb(bankid) ///
         cluster(bankid)
 
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
-
-* Outcome: d_total_loans_not_for_sale
-reghdfe d_total_loans_not_for_sale ///
+reghdfe d_core_deposit ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
@@ -190,11 +250,13 @@ reghdfe d_total_loans_not_for_sale ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        if sample_stage1, ///
+		, ///
         absorb(bankid) ///
         cluster(bankid)
 
-reghdfe d_total_loans_not_for_sale ///
+test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
+
+reghdfe d_core_deposit ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
@@ -203,15 +265,20 @@ reghdfe d_total_loans_not_for_sale ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        if sample_stage1 & large_bank == 0, ///
+		if large_bank==0, ///
         absorb(bankid) ///
         cluster(bankid)
 
+test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
 *------------------------------------------------------
 * 5. Stage-2 IV regressions (baseline, no lagged bank controls)
+*  - Endogenous regressor: cum_d_interest_rate_on_deposit (cum Δ deposit rate)
+*  - Instrument set: zS, zR, zH × cum ΔFFR
+*  - Controls: bank FE, quarter FE, region×quarter controls
+*  - Weak-ID diagnostics (KP rk tests) reported in the log
 *------------------------------------------------------
-* Full sample
+* Total loans — all banks
 ivreghdfe d_total_loans ///
 		c.metro_dummy#c.cum_d_ffr ///
 		c.log_median_hh_income_z#c.cum_d_ffr ///
@@ -222,6 +289,19 @@ ivreghdfe d_total_loans ///
         absorb(bankid) ///
         cluster(bankid)
 
+* Total loans — small banks
+ivreghdfe d_total_loans ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
+        if large_bank==0, ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* Loans not for sale — all banks
 ivreghdfe d_total_loans_not_for_sale ///
 		c.metro_dummy#c.cum_d_ffr ///
 		c.log_median_hh_income_z#c.cum_d_ffr ///
@@ -232,28 +312,19 @@ ivreghdfe d_total_loans_not_for_sale ///
         absorb(bankid) ///
         cluster(bankid)
 
-ivreghdfe d_single_family_loans ///
+* Loans not for sale — small banks
+ivreghdfe d_total_loans_not_for_sale ///
 		c.metro_dummy#c.cum_d_ffr ///
 		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr), ///
+        (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
+        if large_bank==0, ///
         absorb(bankid) ///
         cluster(bankid)
 
-ivreghdfe d_ci ///
-		c.metro_dummy#c.cum_d_ffr ///
-		c.log_median_hh_income_z#c.cum_d_ffr ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr), ///
-        absorb(bankid) ///
-        cluster(bankid)
 *------------------------------------------------------
 * 6. Close log
 *------------------------------------------------------
 log close combined
-
-

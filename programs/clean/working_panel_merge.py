@@ -23,8 +23,8 @@ OUTPUT_CSV = f"{WORK_DIR}/working_panel.csv"
 
 # Constants
 ASSET_LARGE_THRESHOLD = 10_000_000
-OUTLIER_Q_LOW = 0.01
-OUTLIER_Q_HIGH = 0.99
+OUTLIER_Q_LOW = 0.005
+OUTLIER_Q_HIGH = 0.995
 Z_LIMIT = 10
 COMMERCIAL_BKCLASS = {'N', 'NM', 'SM'}
 DATE_START = "2022-01-01"
@@ -123,10 +123,9 @@ def main() -> None:
         'd_average_interest_bearing_deposit',
         'd_core_deposit',
         'd_total_loans',
-        'd_total_loans_not_for_sale',
-        'd_single_family_loans',
-        'd_C&I',
+        'd_total_loans_not_for_sale'
     ]
+    
     for col in winsor_vars:
         if col in df.columns:
             series_in_sample = df.loc[base_mask, col].dropna()
@@ -134,9 +133,6 @@ def main() -> None:
                 continue
             low_q = series_in_sample.quantile(0.005)
             high_q = series_in_sample.quantile(0.995)
-            num_below = int((series_in_sample < low_q).sum())
-            num_above = int((series_in_sample > high_q).sum())
-            print(f'Winsorizing {col} at 0.5–99.5%: clipped below={num_below}, above={num_above}, total={num_below + num_above} (rows lost: 0)')
             df[col] = df[col].clip(lower=low_q, upper=high_q)
 
     # Keep z-scores strictly within [-Z_LIMIT, Z_LIMIT]
@@ -165,10 +161,8 @@ def main() -> None:
     # Cumulative changes in deposit quantities (levels expressed as cumulative growth)
     cum_avg_dep = df.groupby('Bank ID')['d_average_deposit'].apply(lambda s: s.fillna(0).cumsum())
     cum_avg_ib = df.groupby('Bank ID')['d_average_interest_bearing_deposit'].apply(lambda s: s.fillna(0).cumsum())
-    cum_core_dep = df.groupby('Bank ID')['d_core_deposit'].apply(lambda s: s.fillna(0).cumsum())
     df['cum_d_average_deposit'] = np.where(df['in_first_quarter'] == 1, cum_avg_dep, np.nan)
     df['cum_d_average_interest_bearing_deposit'] = np.where(df['in_first_quarter'] == 1, cum_avg_ib, np.nan)
-    df['cum_d_core_deposit'] = np.where(df['in_first_quarter'] == 1, cum_core_dep, np.nan)
 
     # Merge FFR and keep policy window
     ffr = pd.read_csv(FFR_CSV)

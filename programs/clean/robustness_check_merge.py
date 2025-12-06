@@ -19,12 +19,12 @@ BANK_CREDIT_CSV = f"{PROC_DIR}/bank_credit.csv"
 INSTRUMENTS_CSV = f"{PROC_DIR}/instruments.csv"
 FFR_CSV = f"{PROC_DIR}/ffr_quarterly.csv"
 CONTROLS_CSV = f"{PROC_DIR}/controls.csv"
-OUTPUT_CSV = f"{WORK_DIR}/working_panel.csv"
+OUTPUT_CSV = f"{WORK_DIR}/robustness_panel.csv"
 
 # Constants
 ASSET_LARGE_THRESHOLD = 10_000_000
-OUTLIER_Q_LOW = 0.01
-OUTLIER_Q_HIGH = 0.99
+OUTLIER_Q_LOW = 0.005
+OUTLIER_Q_HIGH = 0.995
 Z_LIMIT = 10
 COMMERCIAL_BKCLASS = {'N', 'NM', 'SM'}
 DATE_START = "2022-01-01"
@@ -37,8 +37,12 @@ def main() -> None:
     instruments = pd.read_csv(INSTRUMENTS_CSV)
     controls = pd.read_csv(
         CONTROLS_CSV,
-        usecols=['rssd9001', 'rssd9999', 'metro_dummy', 'log_median_hh_income_z']
-    )  # only needed fields
+        usecols=[
+            'rssd9001', 'rssd9999',
+            'metro_dummy', 'log_median_hh_income_z',
+            'ROA', 'asset_to_equity', 'core_deposit_share', 'wholesale_share', 'log_asset'
+        ]
+    )  # needed control fields
 
     # Merge core inputs
     df = deposit_interest_rate.merge(
@@ -83,12 +87,13 @@ def main() -> None:
     df.drop(columns=['BKCLASS'], inplace=True)
     mask_commercial_bank = df['is_commercial_bank'] == 1
     
-    # # Generate lag-1 for all control variables (from controls.csv) - disabled
-    # control_variables = [c for c in controls.columns if c not in ['rssd9001', 'rssd9999']]
-    # control_variables = [c for c in control_variables if c in df.columns]
-    # lagged_controls = df.groupby('Bank ID')[control_variables].shift(1)
-    # lagged_controls.columns = [f"lag1_{c}" for c in control_variables]
-    # df = pd.concat([df, lagged_controls], axis=1)
+    # Generate lag-1 for all control variables (from controls.csv)
+    control_variables = [c for c in controls.columns if c not in ['rssd9001', 'rssd9999']]
+    control_variables = [c for c in control_variables if c in df.columns]
+    if len(control_variables) > 0:
+        lagged_controls = df.groupby('Bank ID')[control_variables].shift(1)
+        lagged_controls.columns = [f"lag1_{c}" for c in control_variables]
+        df = pd.concat([df, lagged_controls], axis=1)
     
     # Policy window mask (do not filter yet)
     mask_policy_window = (df['Date'] >= DATE_START) & (df['Date'] <= DATE_END)
@@ -125,6 +130,7 @@ def main() -> None:
     print('Rows dropped due to rate-series filter (union):', int(union_outside.sum()))
 
     # Winsorize deposit and loan growth variables at 0.5% / 99.5%
+    # Robust panel: also DROP rows outside these ranges (stricter than baseline)
     winsor_vars = [
         'd_average_deposit',
         'd_average_interest_bearing_deposit',
@@ -132,8 +138,12 @@ def main() -> None:
         'd_total_loans',
         'd_total_loans_not_for_sale',
         'd_single_family_loans',
+        'd_multifamily_loans',
         'd_C&I',
+        'ROA',
+        'asset_to_equity',
     ]
+    bounds = {}
     for col in winsor_vars:
         if col in df.columns:
             series_in_sample = df.loc[base_mask, col].dropna()
@@ -141,10 +151,15 @@ def main() -> None:
                 continue
             low_q = series_in_sample.quantile(0.005)
             high_q = series_in_sample.quantile(0.995)
-            num_below = int((series_in_sample < low_q).sum())
-            num_above = int((series_in_sample > high_q).sum())
-            print(f'Winsorizing {col} at 0.5–99.5%: clipped below={num_below}, above={num_above}, total={num_below + num_above} (rows lost: 0)')
-            df[col] = df[col].clip(lower=low_q, upper=high_q)
+            bounds[col] = (low_q, high_q)
+    # Build robust drop mask BEFORE clipping, so outliers are actually excluded
+    robust_winsor_mask = pd.Series(True, index=df.index)
+    for col, (low_q, high_q) in bounds.items():
+        robust_winsor_mask &= df[col].between(low_q, high_q)
+    print('Rows dropped due to robust winsor filter:', int((base_mask & ~robust_winsor_mask).sum()))
+    # Now clip values to bounds (for remaining rows)
+    for col, (low_q, high_q) in bounds.items():
+        df[col] = df[col].clip(lower=low_q, upper=high_q)
 
     # Keep z-scores strictly within [-Z_LIMIT, Z_LIMIT]
     mask_z_scores = (
@@ -154,7 +169,7 @@ def main() -> None:
     )
     
     # Apply all masks at once
-    all_masks = base_mask & mask_rate_range & mask_z_scores
+    all_masks = base_mask & mask_rate_range & mask_z_scores & robust_winsor_mask
     df = df[all_masks].copy()
     df.drop(columns=['is_commercial_bank'], inplace=True)
 
@@ -184,22 +199,11 @@ def main() -> None:
     # Large bank indicator (size threshold)
     df['large_bank'] = np.where(df['ASSET'] > ASSET_LARGE_THRESHOLD, 1, 0)
 
-    # # Winsorize ROA and asset_to_equity at 0.5% / 99.5%; cap core_deposit_share below 1 - disabled
-    # low_roa = df['ROA'].quantile(OUTLIER_Q_LOW)
-    # high_roa = df['ROA'].quantile(OUTLIER_Q_HIGH)
-    # df['ROA'] = df['ROA'].clip(lower=low_roa, upper=high_roa)
-
-    # low_ae = df['asset_to_equity'].quantile(OUTLIER_Q_LOW)
-    # high_ae = df['asset_to_equity'].quantile(OUTLIER_Q_HIGH)
-    # df['asset_to_equity'] = df['asset_to_equity'].clip(lower=low_ae, upper=high_ae)
-
-    # df['core_deposit_share'] = np.minimum(df['core_deposit_share'], 0.999)
-
-    # # Drop contemporaneous control variables if still present - disabled
-    # contemporaneous_controls = ['ROA', 'core_deposit_share', 'wholesale_share', 'asset_to_equity', 'log_asset']
-    # to_drop = [c for c in contemporaneous_controls if c in df.columns]
-    # if len(to_drop) > 0:
-    #     df.drop(columns=to_drop, inplace=True)
+    if 'core_deposit_share' in df.columns:
+        df['core_deposit_share'] = np.minimum(df['core_deposit_share'], 0.999)
+        
+    if 'wholesale_share' in df.columns:
+        df['wholesale_share'] = np.minimum(df['wholesale_share'], 0.999)
     
     # Count after winsorizing
     print('Bank-quarter after winsorizing: ', len(df))
