@@ -212,17 +212,44 @@ Summary Statistics - Deposit and Loan Growth
 :::{#tbl-baseline-first-stage}
 {{< include ../results/baseline_first_stage.txt >}}
 
+*Notes*: This table reports first-stage regressions for the IV specifications. The excluded instruments are interactions of cum ΔFFR with pre-determined bank characteristics. All models include bank and quarter fixed effects. Standard errors are clustered at the bank level, and the joint F-statistic tests the relevance of the excluded instruments.
+
 Baseline first-stage results
 :::
 
 :::{#tbl-baseline-second-stage}
 {{< include ../results/baseline_2sls.txt >}}
 
+*Notes*: This table reports second-stage 2SLS estimates of the effect of deposit funding conditions on lending. The key regressors—cum ΔDeposit Rate and ΔDeposit Quantity—are instrumented using the same interactions from the first stage. All specifications include bank and quarter fixed effects. Standard errors are clustered at the bank level, and the Kleibergen–Paap F-statistic reports instrument strength.
+
 Baseline second-stage results
 :::
 
 
 ## Robustness checks
+:::{#tbl-robustness-rates}
+{{< include ../results/robustness_rates.txt >}}
+
+*Notes*: This table reports robustness first-stage regressions for alternative deposit-rate measures. The excluded instruments remain interactions of cum ΔFFR and bank characteristics. All models include bank and quarter fixed effects. Standard errors are clustered at the bank level, and the Joint F-statistic is shown at the bottom of each column. 
+
+Robustness checks - Rates
+:::
+
+:::{#tbl-robustness-quantities}
+{{< include ../results/robustness_quantity.txt >}}
+
+*Notes*: This table reports first-stage robustness regressions for alternative deposit-quantity outcomes. The excluded instruments are the same interactions of cum ΔFFR and bank characteristics. All models include bank and quarter fixed effects. Standard errors are clustered at the bank level, and the Joint F-statistic reports instrument relevance. 
+
+Robustness checks - Quantities
+:::
+
+:::{#tbl-robustness-2sls}
+{{< include ../results/robustness_2sls.txt >}}
+
+*Notes*: This table reports robustness 2SLS estimates using alternative deposit measures as the endogenous variable. All specifications instrument the deposit variable with interactions of cum ΔFFR and pre-determined bank characteristics. Bank and quarter fixed effects are included. Standard errors are clustered at the bank level, and the Kleibergen–Paap F-statistic is reported for instrument strength.
+
+Robustness checks - 2SLS
+:::
 
 # Appendix 
 
@@ -235,5 +262,13 @@ Principal Component Analysis Loadings
 :::
 
 @tbl-pca-results reports the loadings of the principal component analysis. The first principal component is considered as the depositor sophistication index, which explains 51.8% of the variance in the county-level data. 
+
+## Appendix 2: 2SLS results for loan sub-categories
+:::{#tbl-2sls-results-loan-sub-categories}
+{{< include ../results/appendix_2sls.txt >}}
+
+2SLS results for loan sub-categories
+:::
+
 
 # References

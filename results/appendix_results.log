@@ -1,0 +1,604 @@
+-------------------------------------------------------------------------------------
+      name:  combined
+       log:  C:\Users\CHENY\Documents\GitHub\thesis-bank/results/appendix_results.log
+  log type:  text
+ opened on:   6 Dec 2025, 01:03:32
+
+. 
+. ivreghdfe d_single_family_loans ///
+>                 c.metro_dummy#c.cum_d_ffr ///
+>                 c.log_median_hh_income_z#c.cum_d_ffr ///
+>         i.qdate ///
+>         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+>         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+>         (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.bran
+> ch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr), ///
+>         absorb(bankid) ///
+>         cluster(bankid)
+(dropped 29 singleton observations)
+(MWFE estimator converged in 1 iterations)
+
+IV (2SLS) estimation
+--------------------
+
+Estimates efficient for homoskedasticity only
+Statistics robust to heteroskedasticity and clustering on bankid
+
+Number of clusters (bankid) =     3820                Number of obs =    28822
+                                                      F( 66,  3819) =    10.49
+                                                      Prob > F      =   0.0000
+Total (centered) SS     =  132.1458303                Centered R2   =   0.0295
+Total (uncentered) SS   =  132.1458303                Uncentered R2 =   0.0295
+Residual SS             =   128.242091                Root MSE      =   .06678
+
+------------------------------------------------------------------------------------
+                   |               Robust
+d_single_family_~s | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------------+----------------------------------------------------------------
+cum_d_interest_r~t |  -.2707803   .5385508    -0.50   0.615    -1.326655    .7850946
+                   |
+     c.metro_dummy#|
+       c.cum_d_ffr |   .0001667   .0008006     0.21   0.835     -.001403    .0017365
+                   |
+                c. |
+log_median_hh_in~z#|
+       c.cum_d_ffr |   .0002023   .0004396     0.46   0.645    -.0006595    .0010642
+                   |
+             qdate |
+              248  |          0  (empty)
+              249  |    .026155   .0117175     2.23   0.026     .0031818    .0491282
+              250  |   .0196868   .0124764     1.58   0.115    -.0047743    .0441478
+              251  |   .0346845   .0134018     2.59   0.010     .0084092    .0609598
+              252  |     .03888   .0167265     2.32   0.020     .0060863    .0716736
+              253  |   .0098658   .0149547     0.66   0.509    -.0194541    .0391857
+              254  |  -.0000238   .0152693    -0.00   0.999    -.0299605    .0299129
+              255  |  -.0009611   .0138639    -0.07   0.945    -.0281426    .0262203
+                   |
+        qdate#c.ne |
+              248  |  -.0034778   .0134775    -0.26   0.796    -.0299016     .022946
+              249  |  -.0163268   .0135961    -1.20   0.230    -.0429831    .0103295
+              250  |    .001622   .0144419     0.11   0.911    -.0266926    .0299367
+              251  |  -.0163947   .0116574    -1.41   0.160    -.0392501    .0064607
+              252  |  -.0192364   .0183887    -1.05   0.296    -.0552891    .0168162
+              253  |   -.014429   .0121709    -1.19   0.236    -.0382912    .0094331
+              254  |   .0079776   .0094797     0.84   0.400    -.0106082    .0265634
+              255  |          0  (omitted)
+                   |
+        qdate#c.ma |
+              248  |  -.0044645   .0152339    -0.29   0.769    -.0343319    .0254028
+              249  |   -.021662   .0144748    -1.50   0.135    -.0500412    .0067171
+              250  |   .0004588   .0135931     0.03   0.973    -.0261917    .0271093
+              251  |  -.0244267   .0129268    -1.89   0.059    -.0497707    .0009173
+              252  |  -.0359286   .0149935    -2.40   0.017    -.0653247   -.0065325
+              253  |          0  (omitted)
+              254  |   .0057784   .0128235     0.45   0.652    -.0193632    .0309199
+              255  |   .0040838   .0118953     0.34   0.731     -.019238    .0274056
+                   |
+        qdate#c.ec |
+              248  |  -.0040464    .013984    -0.29   0.772    -.0314632    .0233705
+              249  |  -.0119737   .0133231    -0.90   0.369    -.0380948    .0141474
+              250  |    .019094   .0120299     1.59   0.113    -.0044916    .0426796
+              251  |  -.0063783   .0107625    -0.59   0.553     -.027479    .0147224
+              252  |  -.0202017   .0139398    -1.45   0.147    -.0475318    .0071284
+              253  |          0    .009522     0.00   1.000    -.0186687    .0186687
+              254  |   .0158709          .        .       .            .           .
+              255  |   .0144874   .0086631     1.67   0.095    -.0024974    .0314721
+                   |
+        qdate#c.wc |
+              248  |   .0198762    .016769     1.19   0.236    -.0130008    .0527533
+              249  |   .0079279    .014931     0.53   0.595    -.0213456    .0372014
+              250  |    .031983   .0150912     2.12   0.034     .0023953    .0615706
+              251  |   .0179427    .013029     1.38   0.169    -.0076016    .0434871
+              252  |          0  (omitted)
+              253  |    .021478   .0136838     1.57   0.117    -.0053503    .0483062
+              254  |   .0416639   .0139264     2.99   0.003     .0143601    .0689677
+              255  |    .040649   .0129971     3.13   0.002      .015167    .0661309
+                   |
+        qdate#c.sa |
+              248  |  -.0211775   .0146701    -1.44   0.149    -.0499394    .0075844
+              249  |  -.0183345   .0137803    -1.33   0.183     -.045352     .008683
+              250  |   .0050693   .0128635     0.39   0.694    -.0201508    .0302893
+              251  |  -.0107755   .0122855    -0.88   0.380    -.0348622    .0133112
+              252  |  -.0204455   .0143071    -1.43   0.153    -.0484959    .0076049
+              253  |          0  (omitted)
+              254  |   .0066771   .0101641     0.66   0.511    -.0132504    .0266046
+              255  |   .0081351   .0112239     0.72   0.469    -.0138704    .0301406
+                   |
+        qdate#c.es |
+              248  |  -.0251911          .        .       .            .           .
+              249  |  -.0339049   .0124465    -2.72   0.006    -.0583073   -.0095025
+              250  |  -.0077103   .0131832    -0.58   0.559    -.0335572    .0181365
+              251  |   -.021708   .0141515    -1.53   0.125    -.0494532    .0060372
+              252  |   -.039264   .0171519    -2.29   0.022    -.0728917   -.0056363
+              253  |  -.0179679   .0143983    -1.25   0.212     -.046197    .0102612
+              254  |          0    .014267     0.00   1.000    -.0279716    .0279716
+              255  |  -.0039482   .0123312    -0.32   0.749    -.0281245    .0202282
+                   |
+        qdate#c.ws |
+              248  |  -.0046079   .0138224    -0.33   0.739    -.0317078    .0224921
+              249  |  -.0186408    .013145    -1.42   0.156    -.0444126    .0071311
+              250  |   .0083077    .010888     0.76   0.446    -.0130392    .0296545
+              251  |          0  (omitted)
+              252  |   -.014175   .0132503    -1.07   0.285    -.0401533    .0118034
+              253  |    .008715   .0119806     0.73   0.467     -.014774     .032204
+              254  |   .0198924   .0110565     1.80   0.072    -.0017847    .0415696
+              255  |   .0171743   .0104615     1.64   0.101    -.0033363     .037685
+                   |
+        qdate#c.mt |
+              248  |    .002809   .0153257     0.18   0.855    -.0272384    .0328564
+              249  |          0  (omitted)
+              250  |   .0119544   .0152842     0.78   0.434    -.0180117    .0419204
+              251  |  -.0078714   .0160302    -0.49   0.623       -.0393    .0235573
+              252  |   -.010886   .0178027    -0.61   0.541    -.0457896    .0240176
+              253  |   .0118647   .0162897     0.73   0.466    -.0200727     .043802
+              254  |   .0069038    .016013     0.43   0.666    -.0244911    .0382987
+              255  |   .0039187   .0150742     0.26   0.795    -.0256355    .0334729
+------------------------------------------------------------------------------------
+Underidentification test (Kleibergen-Paap rk LM statistic):            298.029
+                                                   Chi-sq(3) P-val =    0.0000
+------------------------------------------------------------------------------
+Weak identification test (Cragg-Donald Wald F statistic):             1380.268
+                         (Kleibergen-Paap rk Wald F statistic):        152.799
+Stock-Yogo weak ID test critical values:  5% maximal IV relative bias    13.91
+                                         10% maximal IV relative bias     9.08
+                                         20% maximal IV relative bias     6.46
+                                         30% maximal IV relative bias     5.39
+                                         10% maximal IV size             22.30
+                                         15% maximal IV size             12.83
+                                         20% maximal IV size              9.54
+                                         25% maximal IV size              7.80
+Source: Stock-Yogo (2005).  Reproduced by permission.
+NB: Critical values are for Cragg-Donald F statistic and i.i.d. errors.
+------------------------------------------------------------------------------
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+------------------------------------------------------------------------------
+Collinearities detected among instruments: 8 instrument(s) dropped
+Instrumented:         cum_d_interest_rate_on_deposit
+Included instruments: c.metro_dummy#c.cum_d_ffr
+                      c.log_median_hh_income_z#c.cum_d_ffr 249.qdate 250.qdate
+                      251.qdate 252.qdate 253.qdate 254.qdate 255.qdate
+                      248b.qdate#c.ne 249.qdate#c.ne 250.qdate#c.ne
+                      251.qdate#c.ne 252.qdate#c.ne 253.qdate#c.ne
+                      254.qdate#c.ne 255.qdate#c.ne 248b.qdate#c.ma
+                      249.qdate#c.ma 250.qdate#c.ma 251.qdate#c.ma
+                      252.qdate#c.ma 253.qdate#c.ma 254.qdate#c.ma
+                      255.qdate#c.ma 248b.qdate#c.ec 249.qdate#c.ec
+                      250.qdate#c.ec 251.qdate#c.ec 252.qdate#c.ec
+                      253.qdate#c.ec 254.qdate#c.ec 255.qdate#c.ec
+                      248b.qdate#c.wc 249.qdate#c.wc 250.qdate#c.wc
+                      251.qdate#c.wc 252.qdate#c.wc 253.qdate#c.wc
+                      254.qdate#c.wc 255.qdate#c.wc 248b.qdate#c.sa
+                      249.qdate#c.sa 250.qdate#c.sa 251.qdate#c.sa
+                      252.qdate#c.sa 253.qdate#c.sa 254.qdate#c.sa
+                      255.qdate#c.sa 248b.qdate#c.es 249.qdate#c.es
+                      250.qdate#c.es 251.qdate#c.es 252.qdate#c.es
+                      253.qdate#c.es 254.qdate#c.es 255.qdate#c.es
+                      248b.qdate#c.ws 249.qdate#c.ws 250.qdate#c.ws
+                      251.qdate#c.ws 252.qdate#c.ws 253.qdate#c.ws
+                      254.qdate#c.ws 255.qdate#c.ws 248b.qdate#c.mt
+                      249.qdate#c.mt 250.qdate#c.mt 251.qdate#c.mt
+                      252.qdate#c.mt 253.qdate#c.mt 254.qdate#c.mt
+                      255.qdate#c.mt
+Excluded instruments: c.sophistication_index_z#c.cum_d_ffr
+                      c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
+Partialled-out:       _cons
+                      nb: total SS, model F and R2s are after partialling-out;
+                          any small-sample adjustments include partialled-out
+                          variables in regressor count K
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+      bankid |      3820        3820           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. 
+. ivreghdfe d_multifamily_loans ///
+>                 c.metro_dummy#c.cum_d_ffr ///
+>                 c.log_median_hh_income_z#c.cum_d_ffr ///
+>         i.qdate ///
+>         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+>         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+>         (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.bran
+> ch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr), ///
+>         absorb(bankid) ///
+>         cluster(bankid)
+(dropped 29 singleton observations)
+(MWFE estimator converged in 1 iterations)
+
+IV (2SLS) estimation
+--------------------
+
+Estimates efficient for homoskedasticity only
+Statistics robust to heteroskedasticity and clustering on bankid
+
+Number of clusters (bankid) =     3820                Number of obs =    28822
+                                                      F( 66,  3819) =     1.65
+                                                      Prob > F      =   0.0008
+Total (centered) SS     =  1411.981848                Centered R2   =   0.0030
+Total (uncentered) SS   =  1411.981848                Uncentered R2 =   0.0030
+Residual SS             =  1407.676915                Root MSE      =    .2213
+
+------------------------------------------------------------------------------------
+                   |               Robust
+d_multifamily_lo~s | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------------+----------------------------------------------------------------
+cum_d_interest_r~t |   1.194144   1.360042     0.88   0.380    -1.472334    3.860622
+                   |
+     c.metro_dummy#|
+       c.cum_d_ffr |  -.0006871   .0025881    -0.27   0.791    -.0057613    .0043871
+                   |
+                c. |
+log_median_hh_in~z#|
+       c.cum_d_ffr |  -.0001409   .0013183    -0.11   0.915    -.0027256    .0024438
+                   |
+             qdate |
+              248  |          0  (empty)
+              249  |   .0422815   .0249525     1.69   0.090    -.0066399    .0912029
+              250  |   .0402343   .0206337     1.95   0.051    -.0002198    .0806885
+              251  |   .0239605   .0174752     1.37   0.170    -.0103011    .0582222
+              252  |    .029512    .022551     1.31   0.191    -.0147011    .0737252
+              253  |   .0033776   .0230741     0.15   0.884    -.0418612    .0486164
+              254  |   .0057633   .0217591     0.26   0.791    -.0368974    .0484239
+              255  |   .0002648   .0227088     0.01   0.991    -.0442578    .0447874
+                   |
+        qdate#c.ne |
+              248  |    .012898   .0429726     0.30   0.764    -.0713534    .0971495
+              249  |  -.0316914   .0395746    -0.80   0.423    -.1092808     .045898
+              250  |  -.0381997   .0333694    -1.14   0.252    -.1036231    .0272238
+              251  |  -.0200193   .0336585    -0.59   0.552    -.0860096     .045971
+              252  |  -.0470304   .0314743    -1.49   0.135    -.1087385    .0146777
+              253  |  -.0515152    .030938    -1.67   0.096    -.1121718    .0091415
+              254  |   .0218724   .0281115     0.78   0.437    -.0332426    .0769874
+              255  |          0  (omitted)
+                   |
+        qdate#c.ma |
+              248  |   .0002929   .0273428     0.01   0.991    -.0533151    .0539009
+              249  |  -.0096888   .0299735    -0.32   0.747    -.0684544    .0490769
+              250  |  -.0175563   .0306575    -0.57   0.567    -.0776629    .0425502
+              251  |   -.023686   .0283777    -0.83   0.404    -.0793229     .031951
+              252  |  -.0264536   .0248882    -1.06   0.288     -.075249    .0223418
+              253  |          0  (omitted)
+              254  |  -.0167183    .027034    -0.62   0.536    -.0697208    .0362842
+              255  |  -.0274319   .0239719    -1.14   0.253     -.074431    .0195672
+                   |
+        qdate#c.ec |
+              248  |   .0277951    .023139     1.20   0.230    -.0175709     .073161
+              249  |  -.0024155   .0263971    -0.09   0.927    -.0541692    .0493382
+              250  |  -.0176593   .0269194    -0.66   0.512    -.0704371    .0351185
+              251  |    .005284   .0247415     0.21   0.831    -.0432239    .0537918
+              252  |  -.0194265   .0209562    -0.93   0.354    -.0605129    .0216598
+              253  |          0  (omitted)
+              254  |  -.0155517   .0237966    -0.65   0.513     -.062207    .0311037
+              255  |  -.0022007   .0197388    -0.11   0.911    -.0409003     .036499
+                   |
+        qdate#c.wc |
+              248  |   .0326978   .0182976     1.79   0.074    -.0031762    .0685718
+              249  |    .002278   .0298911     0.08   0.939     -.056326    .0608819
+              250  |  -.0126908   .0226899    -0.56   0.576    -.0571763    .0317946
+              251  |  -.0011114   .0202057    -0.06   0.956    -.0407264    .0385036
+              252  |          0   .0243954     0.00   1.000    -.0478292    .0478292
+              253  |   .0187291   .0225805     0.83   0.407    -.0255419    .0630001
+              254  |   .0070823          .        .       .            .           .
+              255  |   .0043462   .0143534     0.30   0.762    -.0237948    .0324872
+                   |
+        qdate#c.sa |
+              248  |   .0193627   .0244104     0.79   0.428    -.0284961    .0672214
+              249  |   .0058834   .0291015     0.20   0.840    -.0511725    .0629394
+              250  |   .0151093   .0313727     0.48   0.630    -.0463995    .0766182
+              251  |   .0089275   .0275911     0.32   0.746    -.0451672    .0630222
+              252  |  -.0058902   .0226751    -0.26   0.795    -.0503466    .0385661
+              253  |          0  (omitted)
+              254  |   .0162036    .026955     0.60   0.548     -.036644    .0690512
+              255  |  -.0098505   .0220878    -0.45   0.656    -.0531555    .0334546
+                   |
+        qdate#c.es |
+              248  |   .0357068   .0288785     1.24   0.216    -.0209119    .0923256
+              249  |   .0041782   .0388708     0.11   0.914    -.0720313    .0803877
+              250  |    .011097   .0312658     0.35   0.723    -.0502022    .0723962
+              251  |   .0273425   .0266514     1.03   0.305    -.0249098    .0795948
+              252  |    .010425   .0315434     0.33   0.741    -.0514185    .0722684
+              253  |   .0090132   .0287911     0.31   0.754    -.0474342    .0654606
+              254  |          0  (omitted)
+              255  |   .0464165   .0239606     1.94   0.053    -.0005604    .0933934
+                   |
+        qdate#c.ws |
+              248  |   .0046901   .0235838     0.20   0.842     -.041548    .0509282
+              249  |  -.0058328   .0324838    -0.18   0.858    -.0695201    .0578545
+              250  |  -.0053795   .0258347    -0.21   0.835    -.0560307    .0452717
+              251  |          0  (omitted)
+              252  |   .0012877    .026444     0.05   0.961    -.0505581    .0531334
+              253  |   .0190576   .0266869     0.71   0.475    -.0332643    .0713796
+              254  |  -.0039895   .0230615    -0.17   0.863    -.0492035    .0412245
+              255  |  -.0167622   .0219317    -0.76   0.445    -.0597612    .0262369
+                   |
+        qdate#c.mt |
+              248  |  -.0063069   .0484082    -0.13   0.896    -.1012153    .0886015
+              249  |          0  (omitted)
+              250  |  -.0625492   .0492428    -1.27   0.204     -.159094    .0339955
+              251  |  -.0300898   .0470125    -0.64   0.522    -.1222618    .0620822
+              252  |   -.080546   .0438731    -1.84   0.066    -.1665628    .0054709
+              253  |  -.0316343   .0436146    -0.73   0.468    -.1171445    .0538759
+              254  |  -.0532133   .0438757    -1.21   0.225    -.1392354    .0328087
+              255  |  -.0414957   .0424554    -0.98   0.328    -.1247332    .0417418
+------------------------------------------------------------------------------------
+Underidentification test (Kleibergen-Paap rk LM statistic):            298.029
+                                                   Chi-sq(3) P-val =    0.0000
+------------------------------------------------------------------------------
+Weak identification test (Cragg-Donald Wald F statistic):             1380.268
+                         (Kleibergen-Paap rk Wald F statistic):        152.799
+Stock-Yogo weak ID test critical values:  5% maximal IV relative bias    13.91
+                                         10% maximal IV relative bias     9.08
+                                         20% maximal IV relative bias     6.46
+                                         30% maximal IV relative bias     5.39
+                                         10% maximal IV size             22.30
+                                         15% maximal IV size             12.83
+                                         20% maximal IV size              9.54
+                                         25% maximal IV size              7.80
+Source: Stock-Yogo (2005).  Reproduced by permission.
+NB: Critical values are for Cragg-Donald F statistic and i.i.d. errors.
+------------------------------------------------------------------------------
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+------------------------------------------------------------------------------
+Collinearities detected among instruments: 8 instrument(s) dropped
+Instrumented:         cum_d_interest_rate_on_deposit
+Included instruments: c.metro_dummy#c.cum_d_ffr
+                      c.log_median_hh_income_z#c.cum_d_ffr 249.qdate 250.qdate
+                      251.qdate 252.qdate 253.qdate 254.qdate 255.qdate
+                      248b.qdate#c.ne 249.qdate#c.ne 250.qdate#c.ne
+                      251.qdate#c.ne 252.qdate#c.ne 253.qdate#c.ne
+                      254.qdate#c.ne 255.qdate#c.ne 248b.qdate#c.ma
+                      249.qdate#c.ma 250.qdate#c.ma 251.qdate#c.ma
+                      252.qdate#c.ma 253.qdate#c.ma 254.qdate#c.ma
+                      255.qdate#c.ma 248b.qdate#c.ec 249.qdate#c.ec
+                      250.qdate#c.ec 251.qdate#c.ec 252.qdate#c.ec
+                      253.qdate#c.ec 254.qdate#c.ec 255.qdate#c.ec
+                      248b.qdate#c.wc 249.qdate#c.wc 250.qdate#c.wc
+                      251.qdate#c.wc 252.qdate#c.wc 253.qdate#c.wc
+                      254.qdate#c.wc 255.qdate#c.wc 248b.qdate#c.sa
+                      249.qdate#c.sa 250.qdate#c.sa 251.qdate#c.sa
+                      252.qdate#c.sa 253.qdate#c.sa 254.qdate#c.sa
+                      255.qdate#c.sa 248b.qdate#c.es 249.qdate#c.es
+                      250.qdate#c.es 251.qdate#c.es 252.qdate#c.es
+                      253.qdate#c.es 254.qdate#c.es 255.qdate#c.es
+                      248b.qdate#c.ws 249.qdate#c.ws 250.qdate#c.ws
+                      251.qdate#c.ws 252.qdate#c.ws 253.qdate#c.ws
+                      254.qdate#c.ws 255.qdate#c.ws 248b.qdate#c.mt
+                      249.qdate#c.mt 250.qdate#c.mt 251.qdate#c.mt
+                      252.qdate#c.mt 253.qdate#c.mt 254.qdate#c.mt
+                      255.qdate#c.mt
+Excluded instruments: c.sophistication_index_z#c.cum_d_ffr
+                      c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
+Partialled-out:       _cons
+                      nb: total SS, model F and R2s are after partialling-out;
+                          any small-sample adjustments include partialled-out
+                          variables in regressor count K
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+      bankid |      3820        3820           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. 
+. ivreghdfe d_ci ///
+>                 c.metro_dummy#c.cum_d_ffr ///
+>                 c.log_median_hh_income_z#c.cum_d_ffr ///
+>         i.qdate ///
+>         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+>         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+>         (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.bran
+> ch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr), ///
+>         absorb(bankid) ///
+>         cluster(bankid)
+(dropped 29 singleton observations)
+(MWFE estimator converged in 1 iterations)
+
+IV (2SLS) estimation
+--------------------
+
+Estimates efficient for homoskedasticity only
+Statistics robust to heteroskedasticity and clustering on bankid
+
+Number of clusters (bankid) =     3820                Number of obs =    28822
+                                                      F( 66,  3819) =     9.05
+                                                      Prob > F      =   0.0000
+Total (centered) SS     =   368.364781                Centered R2   =   0.0272
+Total (uncentered) SS   =   368.364781                Uncentered R2 =   0.0272
+Residual SS             =  358.3583747                Root MSE      =    .1116
+
+------------------------------------------------------------------------------------
+                   |               Robust
+              d_ci | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------------+----------------------------------------------------------------
+cum_d_interest_r~t |  -.9425866   .8099256    -1.16   0.245    -2.530515    .6453418
+                   |
+     c.metro_dummy#|
+       c.cum_d_ffr |    .004654   .0012918     3.60   0.000     .0021213    .0071868
+                   |
+                c. |
+log_median_hh_in~z#|
+       c.cum_d_ffr |   .0013094   .0007253     1.81   0.071    -.0001127    .0027315
+                   |
+             qdate |
+              248  |          0  (empty)
+              249  |   .0496205   .0154552     3.21   0.001     .0193192    .0799218
+              250  |   .0456259   .0158018     2.89   0.004      .014645    .0766067
+              251  |   .0515618   .0146522     3.52   0.000     .0228349    .0802886
+              252  |   .0298189   .0156347     1.91   0.057    -.0008344    .0604721
+              253  |   .0640674   .0176078     3.64   0.000     .0295458     .098589
+              254  |   .0403267   .0177424     2.27   0.023     .0055412    .0751122
+              255  |   .1012098   .0203693     4.97   0.000      .061274    .1411455
+                   |
+        qdate#c.ne |
+              248  |    .002194   .0360767     0.06   0.952    -.0685375    .0729255
+              249  |  -.0198749   .0412003    -0.48   0.630    -.1006517    .0609018
+              250  |   .0113385   .0390803     0.29   0.772    -.0652819    .0879588
+              251  |    .019685   .0318691     0.62   0.537     -.042797    .0821671
+              252  |   .0244081   .0338878     0.72   0.471    -.0420318    .0908481
+              253  |  -.0143556   .0308434    -0.47   0.642    -.0748267    .0461154
+              254  |   .0436753   .0409965     1.07   0.287    -.0367019    .1240525
+              255  |          0  (omitted)
+                   |
+        qdate#c.ma |
+              248  |   .0083455   .0204286     0.41   0.683    -.0317065    .0483976
+              249  |  -.0116437   .0207141    -0.56   0.574    -.0522555    .0289681
+              250  |   .0030358   .0193321     0.16   0.875    -.0348664     .040938
+              251  |   .0164123   .0176522     0.93   0.353    -.0181964     .051021
+              252  |   .0288486   .0174069     1.66   0.098    -.0052792    .0629763
+              253  |          0  (omitted)
+              254  |   .0177078   .0152651     1.16   0.246    -.0122208    .0476364
+              255  |  -.0307555   .0201765    -1.52   0.128    -.0703133    .0088023
+                   |
+        qdate#c.ec |
+              248  |   .0293988   .0164394     1.79   0.074     -.002832    .0616296
+              249  |   .0155306   .0161889     0.96   0.337     -.016209    .0472702
+              250  |   .0029242   .0142049     0.21   0.837    -.0249257    .0307741
+              251  |   .0074441   .0120763     0.62   0.538    -.0162326    .0311207
+              252  |   .0124335   .0119209     1.04   0.297    -.0109385    .0358055
+              253  |          0   .0127929     0.00   1.000    -.0250815    .0250815
+              254  |  -.0095855          .        .       .            .           .
+              255  |  -.0526398    .017166    -3.07   0.002    -.0862951   -.0189844
+                   |
+        qdate#c.wc |
+              248  |   .0358469   .0158042     2.27   0.023     .0048614    .0668325
+              249  |   .0125161   .0158594     0.79   0.430    -.0185776    .0436099
+              250  |  -.0212581   .0132388    -1.61   0.108     -.047214    .0046978
+              251  |  -.0158452   .0127869    -1.24   0.215     -.040915    .0092245
+              252  |          0  (omitted)
+              253  |  -.0041657   .0146081    -0.29   0.776     -.032806    .0244747
+              254  |  -.0196648   .0116677    -1.69   0.092    -.0425403    .0032107
+              255  |  -.0703511   .0162439    -4.33   0.000    -.1021985   -.0385036
+                   |
+        qdate#c.sa |
+              248  |   .0036699   .0185641     0.20   0.843    -.0327266    .0400664
+              249  |  -.0028284   .0192548    -0.15   0.883    -.0405791    .0349223
+              250  |   .0154856   .0170749     0.91   0.365    -.0179912    .0489624
+              251  |   .0245302   .0155753     1.57   0.115    -.0060066     .055067
+              252  |   .0313343   .0156907     2.00   0.046     .0005713    .0620974
+              253  |          0  (omitted)
+              254  |   .0266664   .0140894     1.89   0.058    -.0009571    .0542899
+              255  |  -.0294157   .0187413    -1.57   0.117    -.0661598    .0073283
+                   |
+        qdate#c.es |
+              248  |   .0159479   .0185148     0.86   0.389    -.0203519    .0522477
+              249  |   .0004637   .0173319     0.03   0.979     -.033517    .0344443
+              250  |   .0104602    .015946     0.66   0.512    -.0208033    .0417237
+              251  |   .0245882   .0135955     1.81   0.071    -.0020671    .0512434
+              252  |   .0131677   .0129795     1.01   0.310    -.0122798    .0386151
+              253  |  -.0066561   .0142611    -0.47   0.641    -.0346161    .0213039
+              254  |          0  (omitted)
+              255  |  -.0340304   .0179571    -1.90   0.058    -.0692367     .001176
+                   |
+        qdate#c.ws |
+              248  |   .0057724   .0166875     0.35   0.729    -.0269448    .0384896
+              249  |   .0015218   .0165262     0.09   0.927    -.0308793     .033923
+              250  |  -.0106528   .0138623    -0.77   0.442     -.037831    .0165255
+              251  |          0   .0131236     0.00   1.000    -.0257299    .0257299
+              252  |    .003626          .        .       .            .           .
+              253  |  -.0163307   .0149658    -1.09   0.275    -.0456725    .0130111
+              254  |  -.0086464   .0120266    -0.72   0.472    -.0322255    .0149328
+              255  |  -.0447709   .0166748    -2.68   0.007    -.0774632   -.0120786
+                   |
+        qdate#c.mt |
+              248  |   .0066008   .0207024     0.32   0.750     -.033988    .0471896
+              249  |          0  (omitted)
+              250  |  -.0247751   .0209113    -1.18   0.236    -.0657735    .0162234
+              251  |  -.0056305   .0214264    -0.26   0.793    -.0476388    .0363778
+              252  |   .0005502   .0200142     0.03   0.978    -.0386893    .0397897
+              253  |  -.0187706    .021035    -0.89   0.372    -.0600115    .0224704
+              254  |  -.0250893   .0203104    -1.24   0.217    -.0649095    .0147309
+              255  |  -.0633468   .0248697    -2.55   0.011    -.1121059   -.0145876
+------------------------------------------------------------------------------------
+Underidentification test (Kleibergen-Paap rk LM statistic):            298.029
+                                                   Chi-sq(3) P-val =    0.0000
+------------------------------------------------------------------------------
+Weak identification test (Cragg-Donald Wald F statistic):             1380.268
+                         (Kleibergen-Paap rk Wald F statistic):        152.799
+Stock-Yogo weak ID test critical values:  5% maximal IV relative bias    13.91
+                                         10% maximal IV relative bias     9.08
+                                         20% maximal IV relative bias     6.46
+                                         30% maximal IV relative bias     5.39
+                                         10% maximal IV size             22.30
+                                         15% maximal IV size             12.83
+                                         20% maximal IV size              9.54
+                                         25% maximal IV size              7.80
+Source: Stock-Yogo (2005).  Reproduced by permission.
+NB: Critical values are for Cragg-Donald F statistic and i.i.d. errors.
+------------------------------------------------------------------------------
+Warning: estimated covariance matrix of moment conditions not of full rank.
+         overidentification statistic not reported, and standard errors and
+         model tests should be interpreted with caution.
+Possible causes:
+         number of clusters insufficient to calculate robust covariance matrix
+         singleton dummy variable (dummy with one 1 and N-1 0s or vice versa)
+partial option may address problem.
+------------------------------------------------------------------------------
+Collinearities detected among instruments: 8 instrument(s) dropped
+Instrumented:         cum_d_interest_rate_on_deposit
+Included instruments: c.metro_dummy#c.cum_d_ffr
+                      c.log_median_hh_income_z#c.cum_d_ffr 249.qdate 250.qdate
+                      251.qdate 252.qdate 253.qdate 254.qdate 255.qdate
+                      248b.qdate#c.ne 249.qdate#c.ne 250.qdate#c.ne
+                      251.qdate#c.ne 252.qdate#c.ne 253.qdate#c.ne
+                      254.qdate#c.ne 255.qdate#c.ne 248b.qdate#c.ma
+                      249.qdate#c.ma 250.qdate#c.ma 251.qdate#c.ma
+                      252.qdate#c.ma 253.qdate#c.ma 254.qdate#c.ma
+                      255.qdate#c.ma 248b.qdate#c.ec 249.qdate#c.ec
+                      250.qdate#c.ec 251.qdate#c.ec 252.qdate#c.ec
+                      253.qdate#c.ec 254.qdate#c.ec 255.qdate#c.ec
+                      248b.qdate#c.wc 249.qdate#c.wc 250.qdate#c.wc
+                      251.qdate#c.wc 252.qdate#c.wc 253.qdate#c.wc
+                      254.qdate#c.wc 255.qdate#c.wc 248b.qdate#c.sa
+                      249.qdate#c.sa 250.qdate#c.sa 251.qdate#c.sa
+                      252.qdate#c.sa 253.qdate#c.sa 254.qdate#c.sa
+                      255.qdate#c.sa 248b.qdate#c.es 249.qdate#c.es
+                      250.qdate#c.es 251.qdate#c.es 252.qdate#c.es
+                      253.qdate#c.es 254.qdate#c.es 255.qdate#c.es
+                      248b.qdate#c.ws 249.qdate#c.ws 250.qdate#c.ws
+                      251.qdate#c.ws 252.qdate#c.ws 253.qdate#c.ws
+                      254.qdate#c.ws 255.qdate#c.ws 248b.qdate#c.mt
+                      249.qdate#c.mt 250.qdate#c.mt 251.qdate#c.mt
+                      252.qdate#c.mt 253.qdate#c.mt 254.qdate#c.mt
+                      255.qdate#c.mt
+Excluded instruments: c.sophistication_index_z#c.cum_d_ffr
+                      c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
+Partialled-out:       _cons
+                      nb: total SS, model F and R2s are after partialling-out;
+                          any small-sample adjustments include partialled-out
+                          variables in regressor count K
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+      bankid |      3820        3820           0    *|
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+. 
+. log close combined
+      name:  combined
+       log:  C:\Users\CHENY\Documents\GitHub\thesis-bank/results/appendix_results.log
+  log type:  text
+ closed on:   6 Dec 2025, 01:03:38
+-------------------------------------------------------------------------------------

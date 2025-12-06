@@ -1,0 +1,19 @@
+|  | (1) | (2) | (3) |
+|---------|:---:|:---:|:---:|
+|Dependent variable | Loans not for sale | Loans not for sale | Loans not for sale |
+|Sample | All banks | All banks | All banks |
+|cum ΔDeposit rate (int.-bearing) | -0.712136*** | - | - |
+| | (0.237866) | - | - |
+|Δ Interest-bearing deposits | - | -0.243202* | - |
+| | - | (0.131824) | - |
+|cum Δ Average deposit | - | - | -0.143536*** |
+| | - | - | (0.053143) |
+|Observations | 28,822 | 30,657 | 28,822 |
+|Clusters     | 3,820 | 4,143 | 3,820 |
+|KP rk Wald F | 132.585 | 10.768 | 15.125 |
+|Bank FE | Yes | Yes | Yes |
+|Quarter FE | Yes | Yes | Yes |
+|Region × Quarter controls | Yes | Yes | Yes |
+|SEs clustered by | Bank | Bank | Bank |
+
+

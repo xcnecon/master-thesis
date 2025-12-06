@@ -4,22 +4,19 @@ global result "$root/results"
 global working "$data/working"
 
 *******************************************************
-* Combined Stage 1 + Stage 2 analysis (master do-file)
-* Purpose:
-*  - Stage 1: Estimate pass-through of policy (cum ΔFFR) to banks'
-*    deposit rates and deposit quantities.
-*  - Stage 2: IV effect of cum ΔDeposit rate on loan growth.
+* Robustness analysis: Stage 1 (first stage) + Stage 2 (IV)
+* Sections:
+*   1) Setup and data preparation
+*   2) Stage 1 robustness: pass-through to deposit rates/quantities
+*   3) Stage 2 robustness: IV effect of deposit pricing/quantities on loans
 * Identification:
-*  - Instruments = sophistication (zS), branch density (zR), market
-*    concentration (zH) interacted with cum ΔFFR (policy slope shifters).
-*  - Fixed effects: bank FE; time FE: quarter FE.
-*  - Region×Quarter controls: deposit-weighted region shares × quarter FE
-*    (PC omitted). Controls absorb geography-time demand/supply shifts.
-* Sample window:
-*  - 2022q1–2023q4 (hike + plateau). We report all banks and small banks
-*    (large_bank==0) specifications.
-* Output:
-*  - Single text log at results/regressions_results.log
+*   - Instruments: zS (sophistication), zR (branch density), zH (HHI),
+*     each interacted with cum ΔFFR (policy slope shifters)
+*   - Fixed effects: bank FE; time FE: quarter FE
+*   - Region×Quarter controls: deposit-weighted region shares × quarter FE
+*     (PC omitted). Absorb geography-time demand/supply shifts
+* Sample window: 2022q1–2023q4 (hike + plateau)
+* Output: results/robustness_results.log
 *******************************************************
 
 clear all
@@ -46,7 +43,7 @@ if _rc {
 mata: mata mlib index
 
 *------------------------------------------------------
-* 1. Import data and build panel
+* 1) Setup and data preparation
 *------------------------------------------------------
 * Load pre-built working panel; read all columns as strings to avoid
 * locale-dependent type guessing. We explicitly destring below.
@@ -86,32 +83,46 @@ xtset bankid qdate
 keep if inrange(qdate, tq(2022q1), tq(2023q4))
 
 *------------------------------------------------------
-* 2. Define analysis sample for Stage 1
+* Notes on sample and controls
+*  - Require non-missing outcomes, policy shock, and region-share controls
+*  - Interactions with i.qdate are formed later; PC share is omitted
+*  - All models: cluster SEs by bank and absorb bank FE + quarter FE
 *------------------------------------------------------
-* Require non-missing outcomes, policy shock, and region-share controls.
-* Interactions with i.qdate are formed later; PC share is omitted.
 
 *------------------------------------------------------
-* 3. Open single results log
+* Open results log (setup)
 *------------------------------------------------------
 cap mkdir "$result"
 capture log close combined
-log using "$result/regressions_results.log", text replace name(combined)
+log using "$result/robustness_results.log", text replace name(combined)
+ 
+*------------------------------------------------------
+* 2) Stage 1 robustness: pass-through to deposit pricing and quantities
+*    - Variants: levels vs first-differences; all vs interest-bearing; core share
+*    - Controls: bank FE; quarter FE; region×quarter shares (PC omitted)
+*    - For each block, report joint F-tests of {zS,zR,zH}×cum ΔFFR
+*------------------------------------------------------
 
-*------------------------------------------------------
-* 4. Stage-1 regressions
-*  - Outcomes: deposit rate changes and deposit quantities
-*  - Bank FE via absorb(bankid); Quarter FE: i.qdate
-*  - Region×Quarter controls: c.<region_share>#i.qdate (PC omitted)
-*  - Policy slope shifters: c.<shifter>#c.cum_d_ffr with shifters {zS, zR, zH}
-*  - We report joint F-tests for {zS, zR, zH}×cum ΔFFR
-*------------------------------------------------------
-// Outcome: cum_d_interest_rate_on_deposit
-* All banks
+* 2a) Deposit rate (levels): all deposits — cum Δ deposit rate
 reghdfe cum_d_interest_rate_on_deposit ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        , ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* Joint significance of {zS, zR, zH}×cum ΔFFR
+test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
+
+* 2b) Deposit rate (levels): interest-bearing only + metro & income controls
+reghdfe cum_d_interest_rate_on_interest_ ///
+        c.sophistication_index#c.cum_d_ffr ///
+		c.branch_density_z#c.cum_d_ffr ///
+		c.hhi_z#c.cum_d_ffr ///
 		c.metro_dummy#c.cum_d_ffr ///
 		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
@@ -124,7 +135,8 @@ reghdfe cum_d_interest_rate_on_deposit ///
 * Joint significance of {zS, zR, zH}×cum ΔFFR
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
-reghdfe cum_d_interest_rate_on_deposit ///
+* 2c) Deposit rate (levels): interest-bearing only (replicate variant)
+reghdfe cum_d_interest_rate_on_interest_ ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
@@ -133,21 +145,35 @@ reghdfe cum_d_interest_rate_on_deposit ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        if large_bank==0, ///
+        , ///
         absorb(bankid) ///
         cluster(bankid)
 
 * Joint significance of {zS, zR, zH}×cum ΔFFR
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
-* Outcome: d_average_interest_bearing_depos
-* All banks
+* 2d) Deposit rate (first-difference): all deposits — Δ deposit rate
+reghdfe d_interest_rate_on_deposit ///
+        c.sophistication_index#c.cum_d_ffr ///
+		c.branch_density_z#c.cum_d_ffr ///
+		c.hhi_z#c.cum_d_ffr ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        , ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* Joint significance of {zS, zR, zH}×cum ΔFFR
+test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
+
+* 2e) Deposit quantity (first-difference): average deposits
 reghdfe d_average_deposit ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
-		c.metro_dummy#c.cum_d_ffr ///
-		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
@@ -158,7 +184,8 @@ reghdfe d_average_deposit ///
 * Joint significance of {zS, zR, zH}×cum ΔFFR
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
-reghdfe d_average_deposit ///
+* 2f) Deposit quantity (first-difference): interest-bearing deposits
+reghdfe d_average_interest_bearing_depos ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
@@ -167,7 +194,41 @@ reghdfe d_average_deposit ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        if large_bank==0, ///
+        , ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* Joint significance of {zS, zR, zH}×cum ΔFFR
+test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
+
+* 2g) Deposit composition (first-difference): core deposit share
+reghdfe d_core_deposit ///
+        c.sophistication_index#c.cum_d_ffr ///
+		c.branch_density_z#c.cum_d_ffr ///
+		c.hhi_z#c.cum_d_ffr ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        , ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* Joint significance of {zS, zR, zH}×cum ΔFFR
+test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
+
+* 2h) Deposit quantity (cum change): average deposits
+reghdfe cum_d_average_deposit ///
+        c.sophistication_index#c.cum_d_ffr ///
+		c.branch_density_z#c.cum_d_ffr ///
+		c.hhi_z#c.cum_d_ffr ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        , ///
         absorb(bankid) ///
         cluster(bankid)
 
@@ -175,58 +236,51 @@ reghdfe d_average_deposit ///
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
 *------------------------------------------------------
-* 5. Stage-2 IV regressions (baseline, no lagged bank controls)
-*  - Endogenous regressor: cum_d_interest_rate_on_deposit (cum Δ deposit rate)
-*  - Instrument set: zS, zR, zH × cum ΔFFR
-*  - Controls: bank FE, quarter FE, region×quarter controls
-*  - Weak-ID diagnostics (KP rk tests) reported in the log
+* 3) Stage 2 robustness: IV effect on loan growth
+*    - Endogenous regressor variants:
+*       3a) cum_d_interest_rate_on_interest_ (pricing, levels)
+*       3b) d_average_interest_bearing_depos (quantities, first-difference)
+*       3c) cum_d_average_deposit (quantities, cum change)
+*    - Instruments: {zS, zR, zH}×cum ΔFFR
+*    - Same FE and controls as Stage 1
 *------------------------------------------------------
-
-* Loans not for sale — all banks
+* ------------------------
+* 3a) Pricing (levels): instrument cum_d_interest_rate_on_interest_
 ivreghdfe d_total_loans_not_for_sale ///
 		c.metro_dummy#c.cum_d_ffr ///
 		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr), ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-ivreghdfe d_total_loans_not_for_sale ///
-		c.metro_dummy#c.cum_d_ffr ///
-		c.log_median_hh_income_z#c.cum_d_ffr ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
-        if large_bank==0, ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-ivreghdfe d_total_loans_not_for_sale ///
-		c.metro_dummy#c.cum_d_ffr ///
-		c.log_median_hh_income_z#c.cum_d_ffr ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_average_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
+        (cum_d_interest_rate_on_interest_ = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
         , ///
         absorb(bankid) ///
         cluster(bankid)
 
+* 3b) Quantities (first-difference): instrument d_average_interest_bearing_depos
 ivreghdfe d_total_loans_not_for_sale ///
 		c.metro_dummy#c.cum_d_ffr ///
 		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_average_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
-        if large_bank==0, ///
+        (d_average_interest_bearing_depos = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
+        , ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* 3c) Quantities (cum change): instrument cum_d_average_deposit
+ivreghdfe d_total_loans_not_for_sale ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (cum_d_average_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
+        , ///
         absorb(bankid) ///
         cluster(bankid)
 
 *------------------------------------------------------
-* 6. Close log
-*------------------------------------------------------
+* End — close log
 log close combined
