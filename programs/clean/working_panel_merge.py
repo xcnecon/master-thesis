@@ -37,8 +37,11 @@ def main() -> None:
     instruments = pd.read_csv(INSTRUMENTS_CSV)
     controls = pd.read_csv(
         CONTROLS_CSV,
-        usecols=['rssd9001', 'rssd9999', 'metro_dummy', 'log_median_hh_income_z']
-    )  # only needed fields
+        usecols=[
+            'rssd9001', 'rssd9999',
+            'metro_dummy', 'log_median_hh_income_z'
+        ]
+    )  # needed control fields
 
     # Merge core inputs
     df = deposit_interest_rate.merge(
@@ -83,6 +86,14 @@ def main() -> None:
     df.drop(columns=['BKCLASS'], inplace=True)
     mask_commercial_bank = df['is_commercial_bank'] == 1
     
+    # Generate lag-1 for all control variables (from controls.csv)
+    control_variables = [c for c in controls.columns if c not in ['rssd9001', 'rssd9999']]
+    control_variables = [c for c in control_variables if c in df.columns]
+    if len(control_variables) > 0:
+        lagged_controls = df.groupby('Bank ID')[control_variables].shift(1)
+        lagged_controls.columns = [f"lag1_{c}" for c in control_variables]
+        df = pd.concat([df, lagged_controls], axis=1)
+    
     # Policy window mask (do not filter yet)
     mask_policy_window = (df['Date'] >= DATE_START) & (df['Date'] <= DATE_END)
     
@@ -118,14 +129,18 @@ def main() -> None:
     print('Rows dropped due to rate-series filter (union):', int(union_outside.sum()))
 
     # Winsorize deposit and loan growth variables at 0.5% / 99.5%
+    # Robust panel: also DROP rows outside these ranges (stricter than baseline)
     winsor_vars = [
         'd_average_deposit',
         'd_average_interest_bearing_deposit',
         'd_core_deposit',
         'd_total_loans',
-        'd_total_loans_not_for_sale'
+        'd_total_loans_not_for_sale',
+        'd_single_family_loans',
+        'd_multifamily_loans',
+        'd_C&I',
     ]
-    
+    bounds = {}
     for col in winsor_vars:
         if col in df.columns:
             series_in_sample = df.loc[base_mask, col].dropna()
@@ -133,7 +148,15 @@ def main() -> None:
                 continue
             low_q = series_in_sample.quantile(0.005)
             high_q = series_in_sample.quantile(0.995)
-            df[col] = df[col].clip(lower=low_q, upper=high_q)
+            bounds[col] = (low_q, high_q)
+    # Build robust drop mask BEFORE clipping, so outliers are actually excluded
+    robust_winsor_mask = pd.Series(True, index=df.index)
+    for col, (low_q, high_q) in bounds.items():
+        robust_winsor_mask &= df[col].between(low_q, high_q)
+    print('Rows dropped due to robust winsor filter:', int((base_mask & ~robust_winsor_mask).sum()))
+    # Now clip values to bounds (for remaining rows)
+    for col, (low_q, high_q) in bounds.items():
+        df[col] = df[col].clip(lower=low_q, upper=high_q)
 
     # Keep z-scores strictly within [-Z_LIMIT, Z_LIMIT]
     mask_z_scores = (
@@ -143,7 +166,7 @@ def main() -> None:
     )
     
     # Apply all masks at once
-    all_masks = base_mask & mask_rate_range & mask_z_scores
+    all_masks = base_mask & mask_rate_range & mask_z_scores & robust_winsor_mask
     df = df[all_masks].copy()
     df.drop(columns=['is_commercial_bank'], inplace=True)
 
@@ -161,8 +184,10 @@ def main() -> None:
     # Cumulative changes in deposit quantities (levels expressed as cumulative growth)
     cum_avg_dep = df.groupby('Bank ID')['d_average_deposit'].apply(lambda s: s.fillna(0).cumsum())
     cum_avg_ib = df.groupby('Bank ID')['d_average_interest_bearing_deposit'].apply(lambda s: s.fillna(0).cumsum())
+    cum_core_dep = df.groupby('Bank ID')['d_core_deposit'].apply(lambda s: s.fillna(0).cumsum())
     df['cum_d_average_deposit'] = np.where(df['in_first_quarter'] == 1, cum_avg_dep, np.nan)
     df['cum_d_average_interest_bearing_deposit'] = np.where(df['in_first_quarter'] == 1, cum_avg_ib, np.nan)
+    df['cum_d_core_deposit'] = np.where(df['in_first_quarter'] == 1, cum_core_dep, np.nan)
 
     # Merge FFR and keep policy window
     ffr = pd.read_csv(FFR_CSV)

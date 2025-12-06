@@ -207,44 +207,22 @@ Summary Statistics - Instruments and Selected Controls
 Summary Statistics - Deposit and Loan Growth
 :::
 
-## First-stage regressions
+## Baseline results
 
-:::{#tbl-first-stage-deposit-rates}
-{{< include ../results/first_stage_deposit_rates.txt >}}
+:::{#tbl-baseline-first-stage}
+{{< include ../results/baseline_first_stage.txt >}}
 
-*Notes*: Coefficients shown with clustered standard errors in parentheses. \*, \**, \*** denote p < 0.10, 0.05, 0.01 respectively. "cum ΔFFR" is the cumulative change in the federal funds rate since 2021Q4. Columns (2) and (4) restrict the sample to small banks. All specifications absorb bank fixed effects and quarter fixed effects, and include deposit-weighted Census region × quarter interactions. Dependent variables are cumulative changes in effective deposit rates: all deposits in columns (1)–(2); interest-bearing deposits in columns (3)–(4).
-
-First-stage regressions for cumulative deposit rates
+Baseline first-stage results
 :::
 
-@tbl-first-stage-deposit-rates reports the first-stage panel regressions of cumulative effective deposit rates on the exposure–policy interactions and shows that deposit-rate pass-through varies systematically across banks. In columns (1)–(2), the coefficient on `zS × cum_d_ffr` is positive, while the coefficients on `zR × cum_d_ffr` and `zH × cum_d_ffr` are negative, with very similar patterns for interest-bearing deposits in columns (3)–(4). Using the column (1) estimates and the standard deviations in Table 1, and interpreting `cum_d_ffr` in 100-basis-point units, a one–standard deviation higher depositor-sophistication index `zS` raises the cumulative all-deposit rate by about **3.5 basis points** more in response to a 100 bps tightening than at the sample mean, whereas a one–standard deviation higher branch-intensity index `zR` lowers pass-through by roughly **5.6 bps** and a one–standard deviation higher local concentration index `zH` reduces pass-through by about **0.5 bps**. These signs are in line with the deposit-franchise logic in @DSS2016: banks with more market power (branch-intensive models in concentrated markets) keep deposit rates lower and preserve the franchise, while those facing more sophisticated depositors are forced to pass through more of the policy shock. At the same time, the fact that these bank-level betas load primarily on depositor sophistication and branch intensity, rather than strongly on HHI, echoes the more recent emphasis in @NR2024 on depositor characteristics as key drivers of deposit betas and outflows during the 2022–23 tightening. However, the very existence of this cross-sectional heterogeneity in bank-level pass-through sits uneasily with the uniform-pricing view in Begenau and @BS2023, which is derived from branch-level RateWatch data for large banks and implies that concentration-driven dispersion in deposit betas should be weak; for the mostly small and community banks in my sample, Table 3 instead suggests that cumulative funding costs do move differentially with policy along the exposure dimensions captured by `zS`, `zR`, and `zH`.
+:::{#tbl-baseline-second-stage}
+{{< include ../results/baseline_2sls.txt >}}
 
-:::{#tbl-first-stage-deposit-quantities}
-
-{{< include ../results/first_stage_deposit_quantities.txt >}}
-
-Notes: Coefficients shown with clustered standard errors in parentheses. \*, \**, \*** denote p < 0.10, 0.05, 0.01 respectively. "cum ΔFFR" is the cumulative change in the federal funds rate since 2021Q4. Columns (2) and (4) restrict the sample to small banks. All specifications absorb bank fixed effects and quarter fixed effects, and include deposit-weighted Census region × quarter interactions. Dependent variables are quarter-on-quarter deposit growth rates (all deposits in columns (1)–(2); interest-bearing deposits in columns (3)–(4)).
-
-First-stage regressions for deposit growth rates
+Baseline second-stage results
 :::
 
-@tbl-first-stage-deposit-quantities shows that the deposit-quantity channel does not receive empirical support in this sample. Neither the depositor-sophistation interaction (`zS × cum ΔFFR`) nor the concentration interaction (`zH × cum ΔFFR`) is statistically distinguishable from zero across all specifications, indicating no systematic relationship between these exposures and deposit outflows during the tightening cycle. More importantly, the coefficient on the relationship-banking interaction (`zR × cum ΔFFR`) is negative and significant, implying that banks with more branch-intensive, relationship-based models experience larger deposit outflows when cumulative policy tightening rises—opposite to the core prediction of the deposit-franchise view, where stronger relationship banking should moderate outflows. The within-R² values remain below 6 percent, and the joint F-statistics are far smaller than in the deposit-rate first-stage regressions. Taken together, these results indicate that the bank-level cross-sectional exposures used in Table 3 do not generate a strong or theoretically consistent first stage for deposit quantities. Consequently, the empirical strategy instruments only cumulative effective deposit rates in the second stage. The stock–stock specification using cumulative deposit changes produces even weaker and noisier results and is included solely as a robustness check.
 
-## Second-stage regressions
-
-:::{#tbl-second-stage-deposit-rates}
-{{< include ../results/2sls_main.txt >}}
-
-*Notes*: This table reports second-stage 2SLS estimates in which cumulative effective deposit rates are instrumented using the predetermined exposure–policy interactions (`zS × cum ΔFFR`, `zR × cum ΔFFR`, `zH × cum ΔFFR`). All specifications include bank fixed effects, quarter fixed effects, and deposit-weighted Census region × quarter controls. Standard errors are clustered at the bank level. Metropolitan and income interactions with cumulative ΔFFR enter as controls but are not used as excluded instruments. The Kleibergen–Paap rk Wald F-statistics correspond to the first-stage weak-instrument test for the excluded instruments. Observations and cluster counts reflect the unbalanced quarterly bank panel from 2021Q4–2023Q3.
-
-
-Second-stage regressions for loan growth
-:::
-
-@tbl-second-stage-deposit-rates reports the second-stage 2SLS estimates linking policy-induced cumulative changes in effective deposit rates to bank loan growth over the 2022–2023 tightening cycle. The coefficients on `cum ΔDeposit rate` range from about −0.85 to −0.98 across total loans and loans not for sale, implying that, for the marginal complier banks, a 1 percentage point (100 basis point) policy-driven increase in the cumulative effective deposit rate is associated with roughly a 0.9 percentage point reduction in cumulative loan growth. Interpreted together with the first-stage evidence, these results are consistent with the core prediction of the deposit channel that higher funding costs contract bank credit supply: as the federal funds rate rises and banks’ effective deposit rates adjust upward, loan growth declines. However, in contrast to the original @DSS2016 mechanism, the contraction in credit in this setting does not appear to operate through an inability to replace lost deposits, since the deposit-quantity first stage is weak. Instead, the estimated elasticity is best viewed as a reduced-form response to higher deposit funding costs, without taking a stand on whether the underlying microeconomic mechanism works primarily through credit rationing, bank-capital considerations, or other channels.
-
-# Robustness checks
-
+## Robustness checks
 
 # Appendix 
 
