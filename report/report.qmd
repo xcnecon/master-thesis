@@ -1,5 +1,5 @@
 ---
-title: "Deposit Funding Shocks and Credit Supply: Bank-Level IV Estimates and Heterogeneous Responses"
+title: "Monetary Policy, Deposit Funding Shocks, and Bank Credit Supply: Bank-Level IV Evidence"
 bibliography: references.bib
 csl: https://www.zotero.org/styles/chicago-author-date
 format:
@@ -13,6 +13,8 @@ format:
     pdf-engine: xelatex
     fontsize: 12pt
     appendices: true
+    abstract: "This paper studies how monetary policy transmits to bank credit supply through deposit funding conditions during the 2022–2023 tightening cycle. Using a quarterly panel of U.S. commercial banks, I construct predetermined exposure indices capturing depositor sophistication, branch intensity, and local deposit-market concentration, and interact them with cumulative changes in the federal funds rate to instrument for bank-level variation in effective deposit rates and deposit growth. The first-stage estimates reveal strong and economically meaningful heterogeneity in cumulative deposit-rate pass-through across banks, whereas the corresponding deposit-quantity responses are weaker and less aligned with canonical deposit-channel predictions. In the second stage, a larger policy-induced increase in a bank’s effective deposit rate is associated with a statistically and economically significant slowdown in the growth of loans not held for sale, indicating a funding-cost channel linking monetary tightening to reduced credit supply. By contrast, the quantity channel is imprecisely estimated and theoretically more ambiguous in this setting, consistent with banks’ ability to substitute across liability classes when faced with deposit outflows. The results support a view of the deposit channel as operating primarily through funding costs rather than through a simple mechanical link between core-deposit volumes and balance-sheet capacity."
+
 ---
 
 # Introduction
@@ -178,7 +180,7 @@ The coefficient $\theta^k$ is interpreted as the effect of a policy-induced cumu
 
 # Results
 ## Summary statistics
-The empirical analysis draws on a cross-section of 4,075 commercial banks observed in 2022Q1, the quarter immediately preceding the onset of the tightening cycle. Banks in the sample are predominantly small and community institutions: the median bank reports $288 million in assets, compared with a mean of $3.31 billion. Asset size is highly skewed, with the largest decile of banks accounting for 89.40 percent of total system assets. Using the $10 billion size threshold commonly employed in the literature, only 106 banks qualify as large institutions, while 3,969 banks fall below this cutoff. This size distribution ensures that the cross-section captures the segment of the banking sector most exposed to deposit-franchise considerations and most relevant for heterogeneity in deposit-rate passthrough.
+The empirical analysis draws on a cross-section of 3,849 commercial banks observed in 2022Q1, the quarter immediately preceding the onset of the tightening cycle. Banks in the sample are predominantly small and community institutions: the median bank reports $304.9 million in assets, compared with a mean of $3.83 billion. Asset size is highly skewed, with the largest decile of banks accounting for 90.26 percent of total system assets. Using the $10 billion size threshold commonly employed in the literature, 115 banks qualify as large institutions, while 3,734 banks fall below this cutoff. This size distribution ensures that the cross-section captures the segment of the banking sector most exposed to deposit-franchise considerations and most relevant for heterogeneity in deposit-rate passthrough.
 
 :::{#fig-deposit-rates}
 ![](../results/deposit_interest_rates_timeseries_combined.png){fig-align="center" fig-width=100%}
@@ -217,6 +219,9 @@ Summary Statistics - Deposit and Loan Growth
 Baseline first-stage results
 :::
 
+@tbl-baseline-first-stage reports the baseline first-stage regressions for cumulative deposit rates and deposit quantities. The exposure–shock interactions are jointly strong predictors of both outcomes, with Joint F-statistics around 150 for cumulative deposit rates and above 12 for deposit quantities, and within R-squared around 0.82 for the rate specifications. Banks with more sophisticated depositor bases and metropolitan footprints exhibit higher cumulative pass-through to effective deposit rates, whereas branch-intensive and high-HHI banks raise deposit rates less in response to a given cumulative increase in the federal funds rate. On the quantity side, branch-intensive banks experience weaker deposit growth when policy tightens, while banks that operate in more concentrated deposit markets see more stable deposit quantities. The patterns are similar when the sample is restricted to small banks, which indicates that the instruments generate economically meaningful and robust bank-level variation in deposit funding conditions over the 2022–2023 tightening cycle.
+
+
 :::{#tbl-baseline-second-stage}
 {{< include ../results/baseline_2sls.txt >}}
 
@@ -225,6 +230,7 @@ Baseline first-stage results
 Baseline second-stage results
 :::
 
+@tbl-baseline-second-stage reports the baseline 2SLS estimates of the effect of deposit funding conditions on lending, using the exposure–shock interactions as instruments for cumulative deposit-rate changes and deposit growth. A one percentage point larger policy-induced cumulative increase in a bank’s effective deposit rate reduces quarter-on-quarter growth in loans not held for sale by roughly 0.8 percentage points in the full sample and 0.76 percentage points for small banks, shifting a typical bank from modest positive loan growth to roughly zero or slightly negative growth over the tightening period. Instrumented deposit growth has a similar sign and economically meaningful magnitude: a ten percentage point lower deposit growth rate is associated with around a three percentage point reduction in loan growth. The coefficients are statistically significant and comparable across the full and small-bank samples, which implies that for the set of banks whose funding conditions are shifted by the instrument, tighter policy-induced deposit funding conditions translate into materially lower loan supply.
 
 ## Robustness checks
 :::{#tbl-robustness-rates}
@@ -243,6 +249,9 @@ Robustness checks - Rates
 Robustness checks - Quantities
 :::
 
+@tbl-robustness-rates and @tbl-robustness-quantities show that the first-stage relationships are robust to alternative definitions of deposit-rate and deposit-quantity outcomes. When cumulative rates on interest-bearing deposits, quarterly changes in deposit rates, and various deposit-quantity measures are used as dependent variables, the signs and relative magnitudes of the exposure coefficients remain close to the baseline. Joint F-statistics stay comfortably above standard weak-instrument thresholds for all preferred specifications, and the within R-squared for cumulative-rate specifications remains high. These results confirm that the exposure–shock interactions continue to deliver coherent and powerful bank-level variation in deposit funding conditions across a range of measurement choices.
+
+
 :::{#tbl-robustness-2sls}
 {{< include ../results/robustness_2sls.txt >}}
 
@@ -251,7 +260,28 @@ Robustness checks - Quantities
 Robustness checks - 2SLS
 :::
 
-# Appendix 
+@tbl-robustness-2sls reports 2SLS robustness specifications that use alternative deposit measures as the endogenous funding variable while keeping the outcome as growth in loans not held for sale. Whether the funding shock is measured by cumulative interest-bearing deposit rates, the growth of interest-bearing deposits, or cumulative average deposits, the estimated effects on loan growth are negative, statistically significant, and similar in magnitude to the baseline results in Table 4. Kleibergen–Paap F-statistics remain well above conventional cutoffs, indicating that the instruments remain strong in each specification. Overall, the credit-supply response to policy-induced changes in deposit funding conditions is robust to how the funding margin is defined and measured.
+
+# Discussion
+
+The estimates in Sections 4.2 and 4.3 provide direct reduced-form evidence that policy-induced increases in banks’ effective deposit rates are associated with materially weaker loan growth, but they offer a more ambiguous picture for the quantity side of the deposit channel. On the cost margin, the cumulative deposit-rate specifications deliver strong first stages and stable second-stage estimates: banks whose effective deposit rates rise more over the 2022–2023 tightening cycle experience significantly lower growth in loans not held for sale, with magnitudes large enough to move a typical bank from modest expansion to near-zero or slightly negative loan growth over the period. These results are robust across alternative rate measures and sample splits and are supported by very high Kleibergen–Paap F-statistics, which suggests that the “funding-cost” component of the deposit channel is empirically relevant at the bank level. :contentReference[oaicite:0]{index=0}
+
+By contrast, the evidence on a separate “deposit quantity” channel is weaker and less consistent with the canonical deposit-channel narrative. When loan growth is instrumented with policy-induced variation in deposit growth, the 2SLS coefficients are negative rather than positive: in the baseline specification, lower deposit growth is associated with lower loan growth, but the sign is opposite to the simple expectation that faster deposit growth should relax funding constraints and support credit expansion. Moreover, these quantity coefficients are only marginally statistically significant, and the corresponding first-stage F-statistics are much smaller than for effective deposit rates, with Kleibergen–Paap values near conventional weak-instrument thresholds rather than far above them. Robustness checks that use alternative quantity measures yield qualitatively similar signs but remain statistically fragile. Taken together, these features suggest that the quantity specifications should be interpreted cautiously and not as a precise estimate of a separate, well-identified deposit-outflow channel.
+
+From the perspective of the broader literature, a natural interpretation is that the credit-supply effects uncovered here are primarily tied to the cost of deposit funding rather than to mechanical constraints on the level of core deposits. This reading is consistent with work emphasizing banks’ ability to substitute into wholesale and non-deposit liabilities, especially at larger institutions, which weakens any tight link between core-deposit stocks and balance-sheet size but leaves funding costs and duration risk as key transmission margins. It also aligns with credit-channel and bank-capital mechanisms in which higher marginal funding costs and thinner net interest margins lead banks to contract lending—even when deposits can be partly replaced—because the shadow cost of capital rises or higher loan rates exacerbate selection and incentive problems. In this framework, deposit outflows still matter to the extent that they are costly to offset, but the mapping from deposit quantities to lending is mediated by liability substitution, pricing, and balance-sheet management rather than by a simple one-for-one funding constraint.
+
+Accordingly, the main contribution of the paper is to provide a bank-level local average treatment effect that links policy-induced shifts in effective deposit funding costs to loan growth, under an identification strategy that directly addresses uniform-pricing and aggregability critiques. The quantity results are better viewed as indicating that the deposit channel does not operate through a clean, stand-alone “outflow” mechanism in this sample, rather than as overturning deposit-channel logic. Future work can build on this distinction by modeling how banks jointly choose deposit pricing, liability mix, and lending when policy shocks hit, and by using richer data on wholesale funding and off-balance-sheet liquidity to separate funding-cost effects from pure balance-sheet quantity constraints.
+
+
+# Conclusion
+This paper investigates how policy-induced shifts in deposit funding conditions affect bank credit supply over the 2022–2023 monetary tightening cycle. Using predetermined exposure indices interacted with cumulative federal funds rate changes, the design delivers exogenous bank-level variation in cumulative deposit-rate adjustments and weaker, less stable variation in deposit quantities. The second-stage estimates show that higher instrumented effective deposit rates lead to materially slower growth in loans not held for sale, providing a robust bank-level local average treatment effect that links monetary tightening to credit supply through the cost of deposit funding. In contrast, the estimated deposit-quantity effects are only marginally significant and exhibit signs inconsistent with a simple quantity-based deposit channel, reflecting both weaker first-stage strength and the likelihood that banks substitute toward alternative liabilities when deposits decline. Overall, the findings support a cost-based formulation of the deposit channel in which tighter policy raises effective funding costs and banks respond by contracting balance-sheet expansion, even absent strong mechanical constraints on core-deposit levels. The paper contributes evidence on this funding-cost mechanism under an identification approach that directly addresses uniform-pricing and aggregability critiques in the deposit-channel literature, and suggests that future work integrate wholesale funding, liability substitution, and dynamic bank balance-sheet management to further disentangle the cost and quantity margins of monetary transmission.
+
+# References
+::: {#refs}
+:::
+
+\newpage
+# Appendix
 
 ## Appendix 1: Principal Component Analysis
 
@@ -269,6 +299,3 @@ Principal Component Analysis Loadings
 
 2SLS results for loan sub-categories
 :::
-
-
-# References

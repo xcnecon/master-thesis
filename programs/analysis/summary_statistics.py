@@ -109,6 +109,7 @@ growth_vars = {
     "gTotalLoans": "d_total_loans",
     "gLoansNotForSale": "d_total_loans_not_for_sale",
     "gSingleFamilyMortgages": "d_single_family_loans",
+    "gMultifamilyMortgages": "d_multifamily_loans",
     "gC&ILoans": "d_C&I",
 }
 
