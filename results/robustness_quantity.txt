@@ -1,6 +1,6 @@
 |  | (1) | (2) | (3) | (4) |
 |---------|:---:|:---:|:---:|:---:|
-|Dependent variable | Δ Average deposit | Δ Interest-bearing deposits | Δ Core deposit share | cum Δ Average deposit |
+|Dependent variable | Δ Average deposit | Δ Interest-bearing deposits | Δ Core deposit | cum Δ Average deposit |
 |Sample | All banks | All banks | All banks | All banks |
 |zS × cum ΔFFR | 0.000622** | 0.001238** | 0.001004** | 0.000782 |
 | | (0.000240) | (0.000478) | (0.000438) | (0.000943) |
