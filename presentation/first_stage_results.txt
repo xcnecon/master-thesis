@@ -1,0 +1,13 @@
+|  | (1) | (2) |
+|---------|:---:|:---:|
+|Dependent variable | cumΔ Deposit rate | cumΔ Core deposits |
+|Sample | All banks | All banks |
+|zS × cum ΔFFR | 0.000357*** | 0.000538 |
+| | (0.000048) | (0.001047) |
+|zR × cum ΔFFR | -0.000695*** | -0.003334*** |
+| | (0.000038) | (0.000683) |
+|zH × cum ΔFFR | -0.000062*** | -0.000179 |
+| | (0.000022) | (0.000444) |
+|Controls      |  Yes       |   Yes       |
+|Within R-sq. | 0.822 | 0.023 |
+|Joint F | 152.84 | 8.39 |

@@ -1,6 +1,6 @@
 |  | (1) | (2) | (3) | (4) |
 |---------|:---:|:---:|:---:|:---:|
-|Dependent variable | Deposit rate | Deposit rate | Deposit quantity | Deposit quantity |
+|Dependent variable | cumΔ Deposit rate | cumΔ Deposit rate | Δ Deposit quantity | Δ Deposit quantity |
 |Sample | All banks | Small banks | All banks | Small banks |
 |zS × cum ΔFFR | 0.000357*** | 0.000343*** | 0.001041*** | 0.000932** |
 | | (0.000048) | (0.000048) | (0.000378) | (0.000382) |

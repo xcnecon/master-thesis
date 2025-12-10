@@ -1,0 +1,12 @@
+|  | (1) | (2) |
+|---------|:---:|:---:|
+|Dependent variable | Loans not for sale | Loans not for sale |
+|Sample | All banks | All banks |
+|cum ΔDeposit rate | -0.823610*** | - |
+| | (0.276385) | - |
+|cum ΔCore deposits | - | -0.179484** |
+| | - | (0.070265) |
+|Controls      | Yes | Yes |
+|KP rk Wald F | 152.799 | 8.392 |
+
+

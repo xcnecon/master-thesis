@@ -1,0 +1,23 @@
+---
+title: "Tables"
+format:
+  pdf:
+    documentclass: article
+    geometry: margin=1in
+    toc: false
+    number-sections: true
+    fontsize: 12pt
+    pdf-engine: xelatex
+---
+
+:::{#tbl-first-stage-results}
+{{< include ../presentation/first_stage_results.txt >}}
+
+First-stage results
+:::
+
+:::{#tbl-second-stage-results}
+{{< include ../presentation/second_stage_results.txt >}}
+
+Second-stage results
+:::
