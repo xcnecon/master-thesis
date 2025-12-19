@@ -118,30 +118,10 @@ reghdfe cum_d_interest_rate_on_deposit ///
 * Joint significance of {zS, zR, zH}×cum ΔFFR
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
-* 2b) Deposit rate (levels): interest-bearing only + metro & income controls
 reghdfe cum_d_interest_rate_on_interest_ ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
-		c.metro_dummy#c.cum_d_ffr ///
-		c.log_median_hh_income_z#c.cum_d_ffr ///
-        i.qdate ///
-        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        , ///
-        absorb(bankid) ///
-        cluster(bankid)
-
-* Joint significance of {zS, zR, zH}×cum ΔFFR
-test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
-
-* 2c) Deposit rate (levels): interest-bearing only (replicate variant)
-reghdfe cum_d_interest_rate_on_interest_ ///
-        c.sophistication_index#c.cum_d_ffr ///
-		c.branch_density_z#c.cum_d_ffr ///
-		c.hhi_z#c.cum_d_ffr ///
-		c.metro_dummy#c.cum_d_ffr ///
-		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
@@ -169,8 +149,24 @@ reghdfe d_interest_rate_on_deposit ///
 * Joint significance of {zS, zR, zH}×cum ΔFFR
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
+reghdfe d_interest_rate_on_interest_bear ///
+        c.sophistication_index#c.cum_d_ffr ///
+		c.branch_density_z#c.cum_d_ffr ///
+		c.hhi_z#c.cum_d_ffr ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        , ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+* Joint significance of {zS, zR, zH}×cum ΔFFR
+test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
+
 * 2e) Deposit quantity (first-difference): average deposits
-reghdfe d_average_deposit ///
+reghdfe d_core_deposit ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
@@ -185,7 +181,7 @@ reghdfe d_average_deposit ///
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
 * 2f) Deposit quantity (first-difference): interest-bearing deposits
-reghdfe d_average_interest_bearing_depos ///
+reghdfe d_average_deposit ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
@@ -202,7 +198,7 @@ reghdfe d_average_interest_bearing_depos ///
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
 * 2g) Deposit composition (first-difference): core deposit share
-reghdfe d_core_deposit ///
+reghdfe d_average_interest_bearing_depos ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
@@ -245,26 +241,21 @@ test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c
 *    - Same FE and controls as Stage 1
 *------------------------------------------------------
 * ------------------------
-* 3a) Pricing (levels): instrument cum_d_interest_rate_on_interest_
+/// without metro and income controls
 ivreghdfe d_total_loans_not_for_sale ///
-		c.metro_dummy#c.cum_d_ffr ///
-		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (cum_d_interest_rate_on_interest_ = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
+        (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
         , ///
         absorb(bankid) ///
         cluster(bankid)
 
-* 3b) Quantities (first-difference): instrument d_average_interest_bearing_depos
 ivreghdfe d_total_loans_not_for_sale ///
-		c.metro_dummy#c.cum_d_ffr ///
-		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_average_interest_bearing_depos = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
+        (cum_d_core_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
         , ///
         absorb(bankid) ///
         cluster(bankid)
@@ -277,6 +268,17 @@ ivreghdfe d_total_loans_not_for_sale ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
         (cum_d_average_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
+        , ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+ivreghdfe d_total_loans_not_for_sale ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (cum_d_average_interest_bearing_d = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
         , ///
         absorb(bankid) ///
         cluster(bankid)

@@ -1,24 +1,24 @@
-|  | (1) | (2) | (3) |
-|---------|:---:|:---:|:---:|
-|Dependent variable | Deposit rate (cum) | Deposit rate (cum, int.-bearing) | Deposit rate (Δ) |
-|Sample | All banks | All banks | All banks |
-|zS × cum ΔFFR | 0.000272*** | 0.000404*** | 0.000069*** |
-| | (0.000031) | (0.000058) | (0.000011) |
-|zR × cum ΔFFR | -0.000704*** | -0.000810*** | -0.000078*** |
-| | (0.000038) | (0.000047) | (0.000009) |
-|zH × cum ΔFFR | -0.000078*** | -0.000079*** | -0.000020*** |
-| | (0.000020) | (0.000026) | (0.000005) |
-|Metro × cum ΔFFR | - | 0.000381*** | 0.000029** |
-| | (-) | (0.000068) | (0.000014) |
-|zY × cum ΔFFR | - | -0.000142** | -0.000031** |
-| | (-) | (0.000057) | (0.000011) |
-|Observations | 28,822 | 28,822 | 30,657 |
-|Clusters     | 3,820 | 3,820 | 4,143 |
-|Within R-sq. | 0.822 | 0.844 | 0.499 |
-|Joint F | 227.91 | 132.62 | 50.96 |
-|Bank FE | Yes | Yes | Yes |
-|Quarter FE | Yes | Yes | Yes |
-|Region × Quarter controls | Yes | Yes | Yes |
-|SEs clustered by | Bank | Bank | Bank |
+|  | (1) | (2) | (3) | (4) |
+|---------|:---:|:---:|:---:|:---:|
+|Dependent variable | cumΔ Deposit rate | cumΔ IB Deposit rate | Δ Deposit rate | Δ Deposit rate |
+|Sample | All banks | All banks | All banks | All banks |
+|zS × cum ΔFFR | 0.000272*** | 0.000355*** | 0.000069*** | 0.000075*** |
+| | (0.000031) | (0.000037) | (0.000011) | (0.000014) |
+|zR × cum ΔFFR | -0.000704*** | -0.000831*** | -0.000078*** | -0.000067*** |
+| | (0.000038) | (0.000047) | (0.000009) | (0.000011) |
+|zH × cum ΔFFR | -0.000078*** | -0.000112*** | -0.000020*** | -0.000023*** |
+| | (0.000020) | (0.000025) | (0.000005) | (0.000006) |
+|Metro × cum ΔFFR | - | - | 0.000029** | 0.000045*** |
+| | (-) | (-) | (0.000014) | (0.000016) |
+|zY × cum ΔFFR | - | - | -0.000031*** | -0.000033** |
+| | (-) | (-) | (0.000011) | (0.000014) |
+|Observations | 28,822 | 28,822 | 30,657 | 30,657 |
+|Clusters     | 3,820 | 3,820 | 4,143 | 4,143 |
+|Within R-sq. | 0.822 | 0.843 | 0.499 | 0.490 |
+|Joint F | 227.91 | 224.08 | 50.96 | 32.39 |
+|Bank FE | Yes | Yes | Yes | Yes |
+|Quarter FE | Yes | Yes | Yes | Yes |
+|Region × Quarter controls | Yes | Yes | Yes | Yes |
+|SEs clustered by | Bank | Bank | Bank | Bank |
 
 

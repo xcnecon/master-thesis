@@ -96,6 +96,53 @@ cap mkdir "$result"
 capture log close combined
 log using "$result/appendix_results.log", text replace name(combined)
 
+// small banks only
+* Loans not for sale — small banks
+ivreghdfe d_total_loans_not_for_sale ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
+        if large_bank==0, ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+ivreghdfe d_total_loans_not_for_sale ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (cum_d_interest_rate_on_interest_ = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
+        if large_bank==0, ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+ivreghdfe d_total_loans_not_for_sale ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (d_core_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
+        if large_bank==0, ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+ivreghdfe d_total_loans_not_for_sale ///
+		c.metro_dummy#c.cum_d_ffr ///
+		c.log_median_hh_income_z#c.cum_d_ffr ///
+        i.qdate ///
+        c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
+        (cum_d_core_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
+        if large_bank==0, ///
+        absorb(bankid) ///
+        cluster(bankid)
+
+// loan sub-categories
 ivreghdfe d_single_family_loans ///
 		c.metro_dummy#c.cum_d_ffr ///
 		c.log_median_hh_income_z#c.cum_d_ffr ///

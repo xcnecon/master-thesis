@@ -116,15 +116,14 @@ reghdfe cum_d_interest_rate_on_deposit ///
 		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        , ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate, ///
         absorb(bankid) ///
         cluster(bankid)
 
 * Joint significance of {zS, zR, zH}×cum ΔFFR
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
-reghdfe cum_d_interest_rate_on_deposit ///
+reghdfe cum_d_interest_rate_on_interest_ ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
@@ -132,8 +131,7 @@ reghdfe cum_d_interest_rate_on_deposit ///
 		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        if large_bank==0, ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate, ///
         absorb(bankid) ///
         cluster(bankid)
 
@@ -142,7 +140,7 @@ test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c
 
 * Outcome: d_average_interest_bearing_depos
 * All banks
-reghdfe d_average_deposit ///
+reghdfe d_core_deposit ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
@@ -150,15 +148,14 @@ reghdfe d_average_deposit ///
 		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        , ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate, ///
         absorb(bankid) ///
         cluster(bankid)
 
 * Joint significance of {zS, zR, zH}×cum ΔFFR
 test c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr
 
-reghdfe d_average_deposit ///
+reghdfe cum_d_core_deposit ///
         c.sophistication_index#c.cum_d_ffr ///
 		c.branch_density_z#c.cum_d_ffr ///
 		c.hhi_z#c.cum_d_ffr ///
@@ -166,8 +163,7 @@ reghdfe d_average_deposit ///
 		c.log_median_hh_income_z#c.cum_d_ffr ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
-        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        if large_bank==0, ///
+        c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate, ///
         absorb(bankid) ///
         cluster(bankid)
 
@@ -199,8 +195,7 @@ ivreghdfe d_total_loans_not_for_sale ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (cum_d_interest_rate_on_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
-        if large_bank==0, ///
+        (cum_d_interest_rate_on_interest_ = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr), ///
         absorb(bankid) ///
         cluster(bankid)
 
@@ -210,8 +205,7 @@ ivreghdfe d_total_loans_not_for_sale ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_average_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
-        , ///
+        (d_core_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr), ///
         absorb(bankid) ///
         cluster(bankid)
 
@@ -221,8 +215,7 @@ ivreghdfe d_total_loans_not_for_sale ///
         i.qdate ///
         c.ne#i.qdate c.ma#i.qdate c.ec#i.qdate c.wc#i.qdate ///
         c.sa#i.qdate c.es#i.qdate c.ws#i.qdate c.mt#i.qdate ///
-        (d_average_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr) ///
-        if large_bank==0, ///
+        (cum_d_core_deposit = c.sophistication_index#c.cum_d_ffr c.branch_density_z#c.cum_d_ffr c.hhi_z#c.cum_d_ffr), ///
         absorb(bankid) ///
         cluster(bankid)
 
