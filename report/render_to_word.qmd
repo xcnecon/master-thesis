@@ -1,0 +1,400 @@
+---
+title: "Monetary Policy, Deposit Funding Shocks, and Bank Credit Supply: Bank-Level IV Evidence"
+bibliography: references.bib
+csl: https://www.zotero.org/styles/chicago-author-date
+format:
+  docx:
+    author: Chenning Xu
+    documentclass: article
+    papersize: letter
+    geometry: margin=1in
+    toc: false
+    number-sections: true
+    pdf-engine: xelatex
+    fontsize: 12pt
+    appendices: true
+    abstract: "This paper examines how monetary tightening transmits to bank credit supply through deposit funding conditions during the 2022–2023 cycle. Using a quarterly panel of more than 3,800 U.S. commercial banks, it constructs predetermined exposure indices measuring depositor sophistication, branch intensity, and local deposit-market concentration, and interacts these exposures with cumulative changes in the federal funds rate to form bank-level shift–share instruments. These interactions are employed in a two-stage least squares framework to instrument for cumulative changes in effective deposit rates and, in parallel specifications, deposit quantities. The exposure indices explain substantial cross-bank heterogeneity in deposit-rate pass-through with signs consistent with canonical predictions and jointly provide a strong instrument for the cumulative change in effective deposit rates. By contrast, the corresponding results for deposit quantities are weaker and less intuitive. In the second stage, a larger policy-induced increase in a bank’s effective deposit rate is associated with a statistically and economically significant deceleration in the growth of loans not held for sale, consistent with a funding-cost channel through which tightening reduces credit supply. Quantity-based specifications that instrument for deposit growth, however, yield either weak identification or coefficients of the opposite sign, consistent with deposit volumes being endogenous to deposit pricing and with banks’ capacity to substitute across liability classes as core deposits run off. Overall, the evidence supports a deposit channel that operates primarily through funding costs and depositor-composition–driven pricing behavior rather than through a mechanical balance-sheet constraint tied to deposit quantities."
+---
+
+# Introduction
+
+Rapid monetary tightening since March 2022 has renewed interest in the mechanisms through which deposit funding transmits policy to bank credit supply. A leading account is the “deposits channel” of @DSS2016. In their framework, households value bank deposits for their safety and liquidity, while banks retain pricing power in local deposit markets. When the Federal Reserve raises the policy rate, outside short rates increase quickly, but deposit rates adjust only partially. The resulting widening of the spread between the federal funds rate and deposit rates raises the opportunity cost of holding deposits relative to money market instruments. Households respond by reallocating balances out of checking and savings accounts into higher-yield alternatives. Because core deposits are imperfect substitutes for other forms of bank funding, deposit outflows tighten funding constraints, induce balance-sheet contraction, and ultimately reduce lending, generating an additional channel of monetary policy transmission.
+
+@DSS2016 seeks to identify this mechanism using branch-level variation and county-level deposit-market concentration (HHI) as a proxy for local pricing power. Their empirical strategy emphasizes two central patterns. First, following a policy tightening, branches located in more concentrated counties exhibit smaller increases in deposit rates, consistent with weaker competitive pressure and greater market power; as a result, deposit spreads widen more in those locations. Second, these same branches experience larger net outflows of core deposits than branches operating in more competitive counties. Aggregating across a bank’s branch network, banks with greater exposure to concentrated deposit markets experience larger deposit outflows and, under the deposits-channel mechanism, should exhibit slower loan growth, conditional on bank fixed effects and other controls.
+
+Subsequent work has raised serious doubts about this particular implementation of the deposit channel. @BS2023 document that U.S. banks, especially larger ones, predominantly use uniform deposit rate setting across their networks: retail deposit rates are set centrally and vary little with county-level HHI, so branch-level heterogeneity in local concentration is unlikely to be a first-order determinant of banks’ pricing decisions. They further show that the original DSS first-stage result relies on dropping “follower” branches whose rates are set elsewhere; once those branches, which constitute the bulk of the branch universe, are included, the relationship between HHI interacted with policy changes and deposit-rate pass-through largely disappears. At the same time, deposit flows continue to comove with HHI even when local pricing cannot be the mechanism, suggesting that county concentration is capturing differences in depositor composition rather than local pricing power, consistent with @NR2024’s evidence that depositor characteristics strongly predict both pass-through and deposit runoff during the 2022–2023 tightening cycle.
+
+@BS2023 also emphasize an aggregation concern: for large, networked banks, core-deposit outflows during tightening are frequently offset by substitution toward other funding sources, including large time deposits and wholesale debt, so total liabilities and assets respond far less than core deposits, consistent with an endogenous-money perspective in which liability management weakens any mechanical mapping from deposit runoff to lending via balance-sheet contraction [@Moore1991]. This paper further argues that when core deposits are operationally valuable, banks facing greater runoff risk have incentives to defend their deposit franchise by raising deposit rates, which makes deposit quantities jointly determined with deposit pricing and weakens the ex ante prediction that banks with greater market power should mechanically experience larger deposit outflows.
+
+Overall, subsequent work casts doubt on the DSS implementation as an empirical account of the deposit channel. Evidence of predominantly uniform, bank-level deposit pricing reduces the scope for local concentration to be a first-order driver of rate setting, while the continued comovement of deposit flows with county-level HHI points to depositor composition rather than pricing power as the relevant source of heterogeneity. Moreover, the ability of large banks to substitute toward alternative liabilities implies that core-deposit runoff need not translate mechanically into balance-sheet contraction and reduced lending. These critiques do not negate the broader premise that monetary policy can transmit to bank credit supply through deposit funding conditions; instead, they motivate a bank-level formulation that emphasizes funding costs and depositor-driven pricing behavior in a setting that accommodates uniform pricing, depositor heterogeneity, and liability management.
+
+The present study takes that step by reformulating and testing a different deposit channel: a funding-cost deposit channel operating at the bank level. Rather than treating county HHI as the sufficient statistic for pricing power, the analysis separates three distinct, predetermined dimensions of exposure: (i) a depositor sophistication index built from county-level education, financial participation, broadband access, and mortgage refinancing activity; (ii) a branch-intensity measure capturing how branch-heavy and relationship-based a bank’s funding model is; and (iii) a deposit-weighted HHI exposure that retains the traditional notion of local concentration but does not give it pride of place. These pre-2021 indices are interacted with the cumulative change in the federal funds rate over the 2021Q4–2023Q4 hiking cycle to construct bank-level, shift–share instruments for deposit funding conditions. Banks serving financially sophisticated households with thin branch networks are, ex ante, expected to face more elastic deposit demand and thus higher pass-through; branch-intensive banks in concentrated markets are expected to have more scope to hold deposit rates down.  
+
+Working at the bank rather than branch level directly addresses the uniform-pricing critique in @BS2023, and using depositor sophistication as a central exposure allows the design to speak to the depositor-composition view in @NR2024. Within this framework, the first step of the analysis estimates how the exposure–shock interactions shift cumulative effective deposit rates and deposit quantities, and the second step uses these interactions as instruments in a two-stage least squares (2SLS) design to recover a bank-level local average treatment effect of policy-induced funding-cost shocks on credit supply. The main endogenous variable is the cumulative change in each bank’s effective deposit rate, interpreted as a cycle-level shock to the cost of deposit funding; deposit-growth measures are used in parallel specifications to probe the quantity side of the channel. The primary outcome is the growth of loans not held for sale. The empirical findings point to a deposit channel that is primarily cost-based rather than quantity-based. On the funding side, the exposure–shock interactions strongly predict cumulative deposit rates with signs consistent with canonical predictions. By contrast, the same interactions are noticeably weaker and less stable in explaining deposit quantities, and the sign pattern does not line up cleanly with the canonical predictions.
+
+On the credit-supply side, the 2SLS estimates point to a robust funding-cost channel. Banks experiencing larger instrumented increases in cumulative effective deposit rates exhibit materially slower growth in loans not held for sale, both in the full sample and within the small-bank subsample. The magnitude is economically meaningful, statistically precise, and stable across alternative rate measures. By contrast, specifications that instrument for deposit-growth measures yield weaker first stages in some cases and produce coefficients that are negative rather than positive, often only marginally significant, a pattern at odds with a mechanical “deposit outflows tighten balance-sheet constraints” interpretation. Viewed alongside the first-stage evidence, the results imply that deposit quantities primarily reflect endogenous adjustment to the same underlying funding-cost pressures that move deposit rates, rather than constituting an independent margin of monetary transmission.
+
+The paper makes two main contributions. First, it provides the first bank-level IV estimates of the causal effect of policy-induced deposit funding shocks on lending, using an identification strategy explicitly designed to remain valid under uniform pricing and depositor heterogeneity. Second, it reframes the @DSS2016 deposit channel as a deposit funding-cost channel in which heterogeneous bank exposure to policy-induced funding-cost shocks affects lending when some borrowers cannot costlessly substitute away from relationship-based lenders.
+
+The remainder of the paper proceeds as follows. Section 2 reviews the related literature. Section 3 describes the data, exposure measures, and empirical strategy. Section 4 presents the first-stage and second-stage results. Section 5 discusses their implications for the deposit-channel and credit-channel literatures. Section 6 concludes.
+
+# Literature Review
+
+The “standard interest-rate channel” is the textbook mechanism in which a policy-induced increase in the federal funds rate passes through to borrowing rates, raising the user cost of credit and reducing interest-sensitive spending [@BernankeGertler1995]. An earlier alternative emphasized a “reserve channel,” under which the central bank’s control of bank reserves and a stable reserve multiplier constrained loan supply [@BernankeBlinder1988; @Balbach1981]. In practice, that mechanism weakened or may never have been effective as financial innovation, regulatory change, and modern operating procedures decoupled lending from contemporaneous reserve quantities: banks reconfigured liability mixes and reserve requirements became less binding, while central banks accommodated aggregate reserve demand in order to target the overnight policy rate [@Minsky1957; @Moore1991]. Against this backdrop, the literature recast monetary transmission in terms of a broader “credit channel,” comprising a balance-sheet channel—tightening weakens borrower cash flow and collateral, raising external-finance premia—and a bank-lending channel, in which reserve drains or funding-cost increases reduce core deposits and, when nondeposit liabilities are imperfect or costly substitutes, shift banks’ loan-supply schedules inward [@BernankeGertler1995; @KashyapStein1997].
+
+A complementary line of work emphasizes the bank-capital channel. Since Basel I, risk-weighted capital standards have tied balance-sheet growth to capital, Basel II increased risk sensitivity, and Basel III added conservation and countercyclical buffers [@BCBS1988; @BCBS2011]. Early “credit-crunch” evidence showed that thinly capitalized banks slowed loan growth as they adjusted to new standards [@BernankeLown1991; @HancockWilcox1994]. Quasi-experimental studies find that tighter, bank-specific capital requirements contract lending at affected institutions, with some migration to less regulated lenders [@AiyarCalomirisWieladek2014]. Risk-sensitive rules can be procyclical: in downturns, higher measured default probabilities and losses given default raise required capital just as earnings weaken, amplifying credit retrenchment [@KashyapStein2004; @GordyHowells2006; @Heid2007; @RepulloSuarez2013]. Importantly, banks need not be at regulatory minima to pull back. When margins compress, value-maximizing banks may conserve capital and smooth dividends, raising the shadow cost of capital and shifting loan supply inward even without a binding constraint [@VanDenHeuvel2002].
+
+The modern deposit channel begins with @DSS2016, who formalize how banks use their deposit franchise to transmit monetary policy shocks when they possess local pricing power. Building on classic evidence that deposit rates are sluggish and adjust less where competition is weaker [@HannanBerger1991; @NeumarkSharpe1992], DSS combine a branch-level within-bank design with bank-level balance-sheet regressions. In their framework, a policy-rate increase lifts outside short rates, but with search frictions and imperfect competition in deposit markets, branch-level deposit rates move by less than one-for-one. The spread between the federal funds rate and the deposit rate therefore widens, and households shift out of low-yield deposits into higher-yield alternatives. In the data, these price–quantity gradients are strongest where local competition is weak: following a Fed funds hike, branches in less competitive (high-$HHI$) counties raise their deposit spreads more and experience lower subsequent deposit growth—larger net outflows—than branches of the same bank in more competitive counties.  
+
+This is captured in regressions that interact changes in the target federal funds rate with lagged county Herfindahl indices under rich fixed effects. In the branch-level specifications, changes in deposit spreads and in core-deposit growth are regressed on $\Delta FFR_t \times HHI_c$ with bank–time, county, state–time, and branch fixed effects, so identification comes from comparing branches of the same bank facing different local concentration. Complementary bank-level Call Report regressions relate changes in core deposits, the aggregate deposit spread (Fed funds minus the average deposit rate), and deposit “revenue” (the spread times the deposit base) to $\Delta FFR_t \times HHI_b$, where $HHI_b$ is constructed as the deposit-weighted average of county $HHI_c$. Aggregation in DSS is essentially mechanical: core deposits—roughly four-fifths of bank liabilities—fall on net when policy tightens; substitution into wholesale and large time deposits is incomplete; total liabilities track the decline in core deposits; and assets and loans contract. Because deposits are households’ primary liquid claim, the system-wide shrinkage of deposits raises the liquidity premium relative to other safe but less liquid instruments, so monetary tightening operates through a quantity-based “deposit channel” in which local market structure shapes the joint response of deposit prices and quantities.
+
+Subsequent work refines both the mechanism and its quantitative importance. On mechanics, retail deposits provide a built-in duration hedge: when deposit rates adjust only slowly to policy, the deposit franchise behaves like a negative-duration asset. Banks pair that hedge with long-duration, fixed-rate assets, keeping net interest margins and profitability relatively stable around rate moves, so tightening transmits mainly through funding-quantity pressure and the liquidity premium rather than large swings in bank net worth [@DrechslerSavovSchnabl2021]. On magnitudes, decompositions of bank valuations show that liability “productivity” explains a large share of cross-bank value: for the median bank, a substantial fraction of market-to-book is attributable to the deposit franchise, and stronger savings-deposit capability is especially valuable [@EganLewellenSunderam2021]. Deposit betas are state-dependent, rising with the level of rates, which shortens effective deposit duration and amplifies balance-sheet sensitivity in hiking cycles [@GreenwaldSchulhoferWohlYounger2023]. Market structure and technology also reshape the first stage: online and national banks pass through more and attract inflows, while smaller institutions face sharper outflows, reallocating credit supply across balance sheets rather than simply shrinking the aggregate [@ErelLiebersohnYannelisEarnest2023; @dAvernasEisfeldtHuangStantonWallace2023]. Outside the United States, evidence from the 2022–2023 cycle shows that larger deposit outflows map into quantity rationing—especially for fixed-rate, longer-maturity loans—and that the effect is stronger at banks entering with larger duration gaps [@ECB2024FlightyDeposits]. Structural estimates link the deposits and capital channels, showing that deposit-market power shapes pass-through to lending and interacts with capital requirements, potentially delivering a low “reversal rate” when cuts erode equity [@WangWhitedWuXiao2020].
+
+A separate strand raises important critiques of the deposit channel as originally identified. One set concerns uniform pricing. Large “large-reach” banking networks post near-uniform retail deposit rates across broad geographies, so that most of the variation in offer rates is explained by bank–quarter rather than county–quarter fixed effects; branch-level dispersion within a given bank is minimal except for a small group of mid-sized regional institutions [@BS2023]. In this environment, county-level concentration (HHI) is at best a noisy proxy for deposit-market power, and within-bank cross-county designs risk attributing pass-through and outflows to “local competition” when they largely reflect centralized rate sheets and corporate pricing policies [@BS2023; @dAvernasEisfeldtHuangStantonWallace2023]. @BS2023 show that the canonical first-stage relation between $\Delta \text{FFR}_t \times HHI_c$ and deposit-rate pass-through disappears once follower branches—over 90% of the branch universe—are reinstated, and that similar deposit-flow sensitivities to $\Delta \text{FFR}_t \times HHI_c$ arise even among follower branches that do not set rates locally. A related critique emphasizes depositor composition. Using geolocation data matched to census and tax records, @NR2024 document large cross-bank differences in depositor income, education, age, and financial-market participation, and show that these characteristics strongly predict both deposit betas and deposit run-offs in the 2022–2023 hiking cycle: banks with younger, wealthier, and more financially sophisticated customers raise rates earlier and more aggressively, yet still experience larger core-deposit and uninsured outflows, and generate substantially lower deposit-franchise value per dollar of deposits than banks serving less sophisticated clients. On this view, county HHI largely proxies for differences in depositor types and digital engagement rather than independent pricing power, and the relevant heterogeneity is at the bank–depositor level rather than the branch–county level [@NR2024; @dAvernasEisfeldtHuangStantonWallace2023].  
+
+A further challenge is aggregation. The deposit channel has macro bite only if substitution from “deposit-channel” balances (non-interest-bearing and low-rate liquid deposits) into time deposits and non-deposit debt is incomplete. Asset-weighted analyses suggest that at the largest institutions substitution is ample: when policy tightens, rate-sensitive deposits flow out, but are offset by inflows into time deposits and by higher wholesale and bond funding, so that total liabilities and loans at the top decile of banks move very little even though cross-sectional patterns in spreads, core-deposit growth, and loan growth are visible in the full sample [@BS2023]. In that sense, HHI-based cross-sectional gradients may mainly reallocate intermediation across balance sheets rather than contract it in the aggregate. Even so, distributional effects remain first order: if bank-dependent borrowers cannot easily substitute away from relationship lending—classic examples being small and opaque firms, local borrowers without direct access to capital markets, or households reliant on community banks—or if smaller banks face higher marginal costs of wholesale replacement, monetary tightening can still produce sizeable contractions in credit where those relationships bind, generating partial aggregation on the small-business margin even when large banks can absorb outflows with alternative funding [@ErelLiebersohnYannelisEarnest2023; @KashyapStein1997; @dAvernasEisfeldtHuangStantonWallace2023].
+
+The remaining gap in the literature concerns a clean mapping from policy-induced, bank-specific changes in deposit funding conditions to bank credit supply. A substantial literature offers cross-sectional explanations of deposit-rate pass-through and deposit outflows and documents how deposit betas and flows vary with market structure, technology, and depositor characteristics, but much less is known about how a given bank-level increase in funding costs or a standardized deposit outflow translates into lending. Flagship contributions such as @DSS2016 relate deposit movements to lending in reduced form, without using policy-driven instruments to recover a bank-level causal elasticity of credit supply with respect to deposit funding shocks. Existing identification strategies typically operate at the branch–county level and rely heavily on local concentration measures, which is problematic in light of the uniform-pricing and depositor-composition critiques in @BS2023 and @NR2024. The empirical design here addresses this gap with a bank-level 2SLS framework: predetermined, pre-2021 exposures to deposit-rate and deposit-flow sensitivity—capturing depositor sophistication, branch intensity, and local concentration—are interacted with cumulative changes in the federal funds rate to construct shift–share instruments for, respectively, each bank’s cumulative change in its effective deposit rate and its deposit outflow. Deposit-weighted region-by-quarter fixed effects absorb local demand conditions and common shocks, and bank fixed effects absorb time-invariant heterogeneity, so that the second stage maps the instrumented funding-cost shock and the instrumented outflow into total and portfolio-level lending, yielding a bank-level local average treatment effect for the credit-supply response that speaks directly to the identification and aggregation concerns raised in the recent deposit-channel literature.  
+
+These 2SLS regressions remain reduced form in the sense that they do not pin down a specific microeconomic mechanism through which higher funding costs reduce lending. The only assumption needed for a deposit channel to operate is that at least some borrowers cannot costlessly substitute away from relationship-based lenders when their banks face adverse funding shocks [@ErelLiebersohnYannelisEarnest2023]. Within this reduced-form framework, classic mechanisms such as credit rationing under adverse selection and capital or earnings constraints that make loan growth sensitive to net interest margins are treated as candidate channels consistent with the estimated elasticity, rather than as objects that are separately identified [@StiglitzWeiss1981; @VanDenHeuvel2002; @WangWhitedWuXiao2020].
+
+# Data and methodology
+
+## Data sources and sample construction
+
+The empirical analysis uses a quarterly panel of U.S. commercial banks constructed from the FFIEC Call Reports merged with the FDIC Summary of Deposits (SOD) and county-level demographic, internet-access, financial participation, and mortgage-refinancing data. Call Reports provide, for each bank $i$ and quarter $t$, information on asset composition, capital, domestic deposits, interest expenses on domestic deposits, and loan balances by category. Effective deposit rates are constructed as interest expense divided by the average stock of domestic deposits across the quarter. Loan growth is measured as the quarter-on-quarter change in outstanding loans relative to lagged balances, with particular attention to loans not held for sale as the main credit-supply outcome in the second stage.
+
+SOD provides branch-level deposit balances and geographic identifiers. The pre-tightening SOD cross-section (2019–2021) is used to recover each bank’s deposit distribution across counties, which serves as the basis for constructing deposit-weighted measures of depositor sophistication, branch intensity, and local market concentration. County-level data from ACS, IRS SOI, FCC broadband statistics, and HMDA refinancing data are merged by FIPS code and used to construct the depositor sophistication index. These raw variables include the share of adults holding a bachelor’s degree, the share above age 65, the share of households with an internet subscription, the fraction of tax returns reporting dividend income, the fraction reporting interest income, and the mortgage-refinancing share in HMDA data. The refinancing share in particular is interpreted as a proxy for both interest-rate sensitivity and financial sophistication. All county-level variables used in the sophistication index are standardized prior to aggregation. No median household income measure enters the construction of the sophistication index; instead, income is introduced separately as a control.
+
+Banks are included in the analysis if they are insured commercial banks, report positive domestic deposits, appear in both Call Reports and SOD in the pre-hike period, and have sufficient observations around the 2021Q4–2023Q4 tightening cycle to support fixed-effects estimation. Banks with implausible accounting values or inconsistent reporting are removed. This construction yields a panel in which the key exposure indices and controls are predetermined with respect to the tightening cycle and can be interpreted as quasi-time-invariant bank characteristics that shape how each balance sheet responds to policy shocks. These characteristics underpin the first-stage and second-stage relationships summarized in the empirical predictions in Section 3.7.
+
+## Construction of cross-sectional exposure indices
+
+The empirical design requires bank-level, time-invariant measures of depositor characteristics and local deposit-market structure. These indices are constructed using pre-period SOD deposit distributions and the county-level sophistication and concentration measures generated by the Python scripts described above. The indices are best viewed as reduced-form proxies for how a bank’s funding base is exposed to monetary tightening: depositor sophistication captures who the customers are and how financially engaged they are; branch intensity summarizes the extent of relationship-based retail banking; and the HHI exposure measures the degree of local concentration in deposit markets. Together, they provide the cross-sectional heterogeneity exploited by the exposure–shock instruments in the first stage and are central to the hypotheses in Section 3.7.
+
+### Depositor sophistication index
+Let $X_c$ denote the vector of standardized county-level variables,
+$$
+X_c =
+\begin{pmatrix}
+\text{share of adults with a bachelor’s degree or higher}_c \\
+\text{share of population aged 65 or above}_c \\
+\text{share of households with an internet subscription}_c \\
+\text{fraction of tax returns reporting dividend income}_c \\
+\text{fraction of tax returns reporting interest income}_c \\
+\text{mortgage refinancing share (HMDA)}_c
+\end{pmatrix},
+$$
+all standardized across counties. Each variable is selected because it proxies for financial literacy, market participation, or sensitivity to interest rates. Refinancing intensity is particularly informative about rate sensitivity and financial sophistication.
+
+The sophistication index at the county level is defined as the first principal component:
+$$
+\text{DSI}_c = w' X_c,
+$$
+where $w$ is the eigenvector associated with the largest eigenvalue of the covariance matrix of $X_c$. The direction of $w$ is chosen such that higher $\text{DSI}_c$ corresponds to counties with more sophisticated and financially engaged households.
+
+Because deposit markets are local, the relevant exposure for bank $i$ aggregates county DSI values using the bank’s SOD deposit distribution:
+$$
+S_i = \frac{\sum_{b \in i} \text{DSI}_{c(b)} \, \text{Dep}_b}{\sum_{b \in i} \text{Dep}_b},
+$$
+where $\text{Dep}_b$ denotes deposits at branch $b$ located in county $c(b)$. The index is then standardized across banks. This depositor sophistication measure is a central novelty of the paper: it combines multiple behavioral and demographic proxies into a single, data-driven index that captures meaningful cross-bank differences in deposit-base sensitivity to interest rates. In the context of the hypotheses in Section 3.7, higher $S_i$ is interpreted primarily as a depositor-composition measure in the spirit of @NR2024; banks serving more sophisticated households are expected to exhibit stronger deposit-rate pass-through and, under a simple deposit-channel view, more fragile deposit funding when policy tightens.
+
+A potential measurement concern is that $S_i$ is constructed by weighting county characteristics with branch-level deposits from the SOD, which assigns deposits to branches rather than to depositors’ true residences. In the presence of commuting, multi-county service areas, or remote banking relationships, the county in which deposits are booked may not coincide with where depositors live or work, and the resulting $S_i$ may therefore be an imperfect proxy for the underlying depositor mix. This concern is unlikely to be first order for the main results for two reasons. First, such geographic misclassification primarily adds noise to the exposure measure and would tend to attenuate first-stage relationships rather than mechanically generate strong, correctly signed pass-through patterns; the fact that the deposit-rate first stage remains strong and stable suggests that $S_i$ retains substantial signal about deposit-demand elasticity. Second, the key 2SLS estimates are similar when the sample is restricted to small banks, for which deposits are more plausibly tied to local branch networks and depositor geographies; the stability of the results in this subsample indicates that the findings are not driven by large, nationally networked institutions for which branch-location proxies are more likely to be problematic.
+
+### Relationship-banking (branch-intensity) index
+
+Branch intensity captures the extent to which a bank maintains a branch-based retail relationship model. For each bank $i$, let $\text{branches}_i$ denote its total number of domestic branches in the pre-period and let $\text{DEPDOM}_i$ denote its total domestic deposits. The branch-intensity index is defined as
+$$
+R_i = \frac{\text{branches}_i}{\text{DEPDOM}_i / 10^9},
+$$
+expressed as branches per billion dollars of domestic deposits. In practice, the logarithm of $R_i + 1$ is used for stability, and the variable is standardized across banks.
+
+A high value of $R_i$ indicates a traditional, branch-heavy funding model with dense local presence and potentially strong relationship ties to retail depositors. Such banks may enjoy substantial franchise value and local market power, which can translate into sluggish deposit-rate adjustment when policy tightens, but they may also be more exposed to retail depositors who respond to perceived return shortfalls by reallocating balances. In the empirical predictions, this index is expected to be associated with lower pass-through in deposit rates (H1) and, under a simple quantity view, with more vulnerable deposit quantities (H2), although the latter is ex ante more fragile.
+
+### Local concentration index (HHI exposure)
+
+County-level deposit concentration is measured via the Herfindahl–Hirschman Index. For county $c$ in year $t$, let $d_{c,j}$ denote deposits of bank $j$ in county $c$, and let $D_c = \sum_j d_{c,j}$ be total deposits in the county. The county-level HHI is
+$$
+\text{HHI}_c = \sum_j \left(\frac{d_{c,j}}{D_c}\right)^2,
+$$
+which lies in the interval $[0,1]$ and measures the concentration of deposit-market shares.
+
+Bank-level exposure to concentration aggregates county HHIs using deposit weights:
+$$
+H_i = \frac{\sum_{b \in i} \text{HHI}_{c(b)} \, \text{Dep}_b}{\sum_{b \in i} \text{Dep}_b}.
+$$
+This measure captures whether a bank primarily operates in more or less concentrated local deposit markets. The index is standardized across banks.
+
+HHI exposure is the canonical proxy for deposit-market power in the original deposit-channel literature @DSS2016 but has been criticized as a noisy measure in more recent work focusing on uniform pricing and depositor composition @BS2023; @NR2024. In this paper, $H_i$ is retained as one component of the exposure vector, but ex ante it is expected to play a weaker role than depositor sophistication and branch intensity in explaining cross-bank differences in deposit-rate pass-through and deposit outflows. This expectation is reflected in the hypotheses H1 and H2 and in the interpretation of the first-stage results.
+
+### Additional bank-level controls
+
+Because the panel is short and cannot support county-by-quarter fixed effects, two additional pre-period bank-level controls are constructed from SOD. Let $M_i$ denote a metropolitan indicator equal to one if a majority of bank $i$’s domestic deposits are located in metropolitan counties. Let $Y_i$ denote the bank’s deposit-weighted log median household income. Both variables are interacted with monetary policy shocks and enter regressions as controls; neither is used as an excluded instrument.
+
+Each bank’s pre-period regional deposit shares $s_{i,r}$ are also computed by mapping counties to one of nine Census regions. These region shares are interacted with quarter dummies to absorb region-specific shocks. Given the short time dimension of the panel, no additional lagged bank-level controls are included in the baseline specifications; time-invariant bank characteristics are absorbed by bank fixed effects, and common or region-specific shocks are absorbed by quarter and region-by-quarter fixed effects. Together, $M_i$, $Y_i$, and the region-share interactions help control for systematic differences in depositor income, urbanization, and regional demand conditions that might otherwise confound the relationship between the main exposure indices and deposit funding conditions, while preserving a clean exclusion restriction for the core exposure–shock interactions.
+
+## Monetary policy shocks and instruments
+
+Monetary policy is measured by the target federal funds rate $r^{FF}_t$. The quarterly change is
+$$
+\Delta r^{FF}_t = r^{FF}_t - r^{FF}_{t-1},
+$$
+and the cumulative change from the pre-tightening quarter $t_0 = \text{2021Q4}$ is
+$$
+R^{FF}_t = r^{FF}_t - r^{FF}_{t_0} = \sum_{s=t_0+1}^{t} \Delta r^{FF}_s.
+$$
+
+The main instruments exploit cross-sectional heterogeneity in $(S_i, R_i, H_i)$ and the common cumulative monetary shock. For each bank $i$ and quarter $t$, the cumulative exposure–shock interactions are defined as
+$$
+z^{\text{cum}}_{S,i,t} = S_i R^{FF}_t, \qquad
+z^{\text{cum}}_{R,i,t} = R_i R^{FF}_t, \qquad
+z^{\text{cum}}_{H,i,t} = H_i R^{FF}_t.
+$$
+Because $(S_i, R_i, H_i)$ are constructed using only pre-period data, these interactions are predetermined with respect to post-2021 outcomes. They vary over time exclusively through $R^{FF}_t$ and across banks exclusively through the cross-sectional indices, and thus constitute a standard shift–share design: for a given path of policy shocks, banks with different pre-2021 exposures experience different effective shifts in deposit funding conditions.
+
+Flow instruments $S_i \Delta r^{FF}_t$, $R_i \Delta r^{FF}_t$, and $H_i \Delta r^{FF}_t$ are constructed for robustness exercises, but cumulative instruments constitute the preferred specification given the timing mismatch inherent in Call Report accruals and the focus on the full 2022–2023 hiking cycle. Metropolitan and income controls enter as their own interactions with the cumulative shock, $M_i R^{FF}_t$ and $Y_i R^{FF}_t$, but are always included as controls rather than excluded instruments. The core identifying assumption is that, conditional on bank fixed effects, time effects, and region-by-quarter controls, these predetermined exposure–shock interactions affect loan growth only through their impact on deposit funding conditions.
+
+## Cumulative effective deposit rates and deposit quantities
+
+Call Report effective deposit rates are constructed from accrued interest expense and average deposit stocks, so they smooth within-quarter pricing changes and can reflect rate adjustments implemented earlier in the cycle. Because the credit-supply object of interest is a tightening-cycle funding-cost shock, the baseline analysis uses cumulative changes in effective deposit rates measured relative to the pre-tightening quarter (2021Q4). Let $r^{dep}_{i,t}$ denote the effective rate on domestic deposits at bank $i$ in quarter $t$. The cumulative change is
+$$
+R^{dep}_{i,t}
+= r^{dep}_{i,t} - r^{dep}_{i,2021\text{Q}4}
+= \sum_{s=2022\text{Q}1}^{t}\left(r^{dep}_{i,s}-r^{dep}_{i,s-1}\right),
+$$
+and analogously for interest-bearing deposits.
+
+Deposit quantities are based on deposit stocks and are less tightly pinned down by theory at the quarterly horizon. Let $D_{i,t}$ denote the relevant deposit stock (e.g., total deposits, core deposits, or interest-bearing deposits). The flow (quarterly) growth rate is
+$$
+g^{D}_{i,t}=\frac{D_{i,t}-D_{i,t-1}}{D_{i,t-1}},
+$$
+and cumulative deposit growth over the tightening episode is defined as
+$$
+G^{D}_{i,t}=\sum_{s=2022\text{Q}1}^{t} g^{D}_{i,s}.
+$$
+While the cumulative change in deposit rates is the natural funding-cost object for credit supply, it is ex ante unclear whether a quantity-based transmission margin should be captured by contemporaneous runoff (a flow concept) or by the accumulated depletion of deposits (a cumulative concept), particularly when banks can substitute across liability classes. The empirical strategy therefore evaluates both $g^{D}_{i,t}$ and $G^{D}_{i,t}$ as alternative deposit-quantity measures in parallel specifications.
+
+
+## First-stage specification
+The instruments exploit cross-sectional heterogeneity in predetermined exposures—depositor sophistication $(S_i)$, branch intensity $(R_i)$, and deposit-weighted local concentration $(H_i)$—interacted with the common policy path. Let $R^{FF}_t$ denote the cumulative change in the target federal funds rate since 2021Q4. The excluded instruments are the cumulative exposure–shock interactions
+$$
+z^{cum}_{S,i,t}=S_iR^{FF}_t,\qquad
+z^{cum}_{R,i,t}=R_iR^{FF}_t,\qquad
+z^{cum}_{H,i,t}=H_iR^{FF}_t.
+$$
+
+The deposit-rate first stage is specified in cumulative form:
+$$
+\begin{aligned}
+R^{dep}_{i,t}
+&= \alpha_i + \lambda_t
++ \beta_S z^{cum}_{S,i,t} + \beta_R z^{cum}_{R,i,t} + \beta_H z^{cum}_{H,i,t} \\
+&\quad + \phi_M\left(M_iR^{FF}_t\right) + \phi_Y\left(Y_iR^{FF}_t\right)
++ \sum_{r}\delta_{r,t}s_{i,r}
++ \varepsilon_{i,t},
+\end{aligned}
+$$
+where $\alpha_i$ and $\lambda_t$ are bank and quarter fixed effects, $M_i$ is a metropolitan indicator, $Y_i$ is deposit-weighted log median income, and $\sum_r \delta_{r,t}s_{i,r}$ denotes deposit-weighted region-by-quarter controls.
+
+For deposit quantities, the same specification is estimated with the dependent variable defined either as flow deposit growth or as cumulative deposit growth:
+$$
+\begin{aligned}
+Q_{i,t}
+&= \alpha_i + \lambda_t
++ \beta^{Q}_S z^{cum}_{S,i,t} + \beta^{Q}_R z^{cum}_{R,i,t} + \beta^{Q}_H z^{cum}_{H,i,t} \\
+&\quad + \phi^{Q}_M\left(M_iR^{FF}_t\right) + \phi^{Q}_Y\left(Y_iR^{FF}_t\right)
++ \sum_{r}\delta^{Q}_{r,t}s_{i,r}
++ \varepsilon^{Q}_{i,t},
+\end{aligned}
+$$
+with $Q_{i,t}$ set to $g^{D}_{i,t}$ in the flow specifications and to $G^{D}_{i,t}$ in the cumulative specifications. The quantity first stages are interpreted as diagnostic evidence on whether the exposure–shock interactions generate a distinct and stable quantity margin in addition to their role in explaining deposit pricing.
+
+## Second-stage specification
+
+The second stage maps instrumented deposit funding conditions into loan growth. Let $g^{k}_{i,t}$ denote quarter-on-quarter growth in loans of category $k$. The 2SLS specification is
+$$
+\begin{aligned}
+g^{k}_{i,t}
+&= \alpha^{k}_i + \lambda^{k}_t + \theta^{k}\widehat{F}_{i,t}
++ \sum_{r}\psi^{k}_{r,t}s_{i,r}
++ u^{k}_{i,t},
+\end{aligned}
+$$
+where $\widehat{F}_{i,t}$ is the fitted value from the corresponding first stage, and the region-by-quarter term absorbs region-specific time variation.
+
+In the baseline funding-cost specifications, $F_{i,t}$ is the cumulative effective deposit rate change, so $\theta^{k}$ measures the effect of a policy-induced increase in deposit funding costs on loan growth. In the quantity specifications, $F_{i,t}$ is set to either flow deposit growth or cumulative deposit growth. Because deposit quantities and deposit rates are jointly determined through banks’ pricing and liability management, the quantity-based estimates are interpreted as evidence on whether the instrument-shifted quantity margin provides an independent transmission channel, rather than as a structural elasticity implied by a mechanical balance-sheet constraint. Across all specifications, the metropolitan and income interactions enter as included controls, while identification relies on the excluded exposure–policy interactions.
+
+## Empirical predictions
+
+The empirical analysis focuses on two related margins of the deposit channel: the cost of deposit funding and the quantity of deposit funding. The first-stage specifications in Sections 3.5–3.6 are primarily diagnostic, but they imply a set of sign predictions that follow directly from existing work on deposit-rate pass-through and deposit outflows. On the pricing side, banks with more sophisticated deposit bases are expected to exhibit higher cumulative pass-through from the policy rate to effective deposit rates, while banks that rely more heavily on branch-based relationship models or operate in more concentrated local markets are expected to adjust deposit rates more sluggishly [@NR2024; @DSS2016]. These cross-sectional patterns reflect the idea that depositor characteristics and local market structure shape the elasticity of deposit demand and hence banks’ optimal pricing responses to monetary tightening. Banks whose deposits are concentrated in more sophisticated areas face more rate-sensitive customers and therefore pass through a larger share of policy tightening into effective deposit rates. By contrast, banks with dense branch networks and those operating in more concentrated local markets enjoy stronger deposit franchises and greater market power, and therefore adjust deposit rates less for a given cumulative increase in the federal funds rate.
+
+> **H1 (First-stage: deposit rates).** In the cumulative deposit-rate first-stage regressions, the exposure–shock interactions should satisfy the following sign pattern: the coefficient on the sophistication interaction is positive, while the coefficients on the branch-intensity and HHI interactions are negative.
+
+On the quantity side, a simple view of the deposit channel suggests that, holding everything else constant, the same exposures that make depositors more rate-sensitive or shape banks’ deposit-pricing behavior could also make deposit funding more fragile when policy tightens. Interpreting the sophistication index primarily as a depositor-composition measure in the spirit of @NR2024, banks serving more sophisticated households should face larger deposit outflows when rates rise, because these customers are better able to monitor relative returns and to reallocate into higher-yield alternatives. By contrast, the implications for branch intensity and $HHI$ are less clear-cut. Branch-intensive banks may rely more on relationship-based, less digitally engaged customers, which can dampen outflows even when pass-through is limited, while $HHI$ combines elements of both local structure and depositor mix and need not have a uniform sign once depositor characteristics are explicitly controlled for. In this formulation, the fragility of funding is governed first by who the depositors are and only secondarily by how local markets are structured, so the direction of the quantity response is unambiguous only along the sophistication dimension.  
+
+At the same time, because the exposure–shock interactions are designed to capture both deposit-rate sensitivity and deposit-flow sensitivity, and because deposit outflows in practice operate partly through the induced changes in deposit rates, the identifying variation for quantities is likely to overlap substantially with that for rates. Ex ante, it is therefore reasonable to expect that the first-stage relationships for deposit quantities will be weaker and noisier than for deposit rates.  
+
+> **H2 (First-stage: deposit quantities).** In the deposit-quantity first-stage regressions, the sophistication–shock interaction is expected to be negative, so that higher sophistication exposure is associated with lower cumulative deposit growth (larger deposit outflows) conditional on the common monetary shock. For the branch-intensity and $HHI$ exposures, no sharp sign prediction is imposed ex ante, reflecting the competing mechanisms highlighted in the recent deposit-channel literature.
+
+The main hypotheses for the second stage concern the mapping from policy-induced changes in deposit funding conditions to loan growth. The first is a cost-based funding channel:
+
+> **H3 (Funding-cost channel).** For banks whose effective deposit rates are shifted upward by the exposure–shock instruments, higher cumulative deposit funding costs reduce the growth rate of loans not held for sale. In terms of equation (3.6), the coefficient on the instrumented cumulative deposit rate is expected to be negative for total loans not held for sale and, potentially, for interest-sensitive loan categories.
+
+This hypothesis is directly implied by credit-channel and bank-capital frameworks in which higher marginal funding costs and thinner net interest margins shift loan-supply schedules inward, even when banks can partially adjust prices, fees, or expenses. It does not take a stand on whether the underlying mechanism is credit rationing, capital constraints, or balance-sheet management more broadly; the parameter of interest is a reduced-form local average treatment effect of a funding-cost shock on loan growth.
+
+The second concerns the role of deposit quantities. A simple balance-sheet view of the deposit channel would suggest that larger deposit outflows tighten funding constraints and reduce lending, implying a positive association between deposit growth and loan growth:
+
+> **H4 (Quantity channel, canonical prediction).** If deposits are difficult or costly to replace with other liabilities at the margin, then, for banks whose deposit quantities are shifted by the exposure–shock instruments, higher deposit growth should be associated with higher loan growth. Equivalently, the coefficient on the instrumented deposit-growth measure in the second-stage regressions should be positive.
+
+At the same time, the literature emphasizes banks’ ability to substitute into wholesale and non-deposit liabilities, especially at larger institutions, and points to liability management, duration risk, and capital regulation as additional determinants of lending [@Moore1991;@Minsky1957; @BS2023]. These considerations make the quantity-based prediction theoretically weaker than the cost-based one. Moreover, if in practice the deposit-rate (funding-cost) channel dominates the pure quantity channel, then deposit growth is itself an endogenous response to the same underlying funding-cost shock: banks that face larger policy-induced increases in deposit rates may both reduce lending and experience weaker deposit growth, so an empirically negative coefficient on instrumented deposit growth is not inconsistent with a fundamentally cost-driven deposit channel. Accordingly, the quantity specifications are treated as exploratory tests of whether a separate “deposit-outflow” mechanism can be detected in the data, rather than as a sharp test of a tightly specified funding-quantity model. The interpretation of Section 4 therefore places more weight on the funding-cost hypothesis (H3), while viewing evidence on H4 as informative but inherently more ambiguous.
+
+# Results
+## Summary statistics
+The empirical analysis draws on a cross-section of 3,849 commercial banks observed in 2022Q1, the quarter immediately preceding the onset of the tightening cycle. Banks in the sample are predominantly small and community institutions: the median bank reports $304.9 million in assets, compared with a mean of $3.83 billion. Asset size is highly skewed, with the largest decile of banks accounting for 90.26 percent of total system assets. Using the $10 billion size threshold commonly employed in the literature, 115 banks qualify as large institutions, while 3,734 banks fall below this cutoff. This size distribution ensures that the cross-section captures the segment of the banking sector most exposed to deposit-franchise considerations and most relevant for heterogeneity in deposit-rate passthrough.
+
+:::{#fig-deposit-rates}
+![](../results/deposit_interest_rates_timeseries_combined.png){fig-align="center" fig-width=100%}
+
+*Notes*: The left panel shows aggregate deposit-weighted effective rates; the right panel shows winsorized simple averages across banks (0.5–99.5%). The shaded region marks 2022Q1–2023Q3.
+
+Deposit Rates and Policy Shocks
+:::
+
+@fig-deposit-rates reports summary statistics for effective deposit rates and the associated monetary-policy shock over the 2022–2023 tightening cycle. The federal funds rate rose by roughly 525 basis points between 2022Q1 and 2023Q3, while the effective deposit rate on all domestic deposits increased much more gradually, from near-zero levels to approximately 2.3 percent by late 2023. Interest-bearing deposits adjusted more quickly, rising to about 3.0 percent over the same period, but still remained well below the policy rate. The cumulative changes reported in @fig-deposit-rates highlight both the magnitude of the common policy shock and the substantial sluggishness and incompleteness of deposit-rate pass-through. These patterns motivate the use of cumulative deposit-rate changes as the key endogenous funding-cost variable in the empirical analysis.
+
+:::{#tbl-summary-statistics}
+
+{{< include ../results/table_2.txt >}}
+
+@tbl-summary-statistics reports summary statistics for the cross-sectional exposure indices and selected controls for the 2022Q1 cross-section. zS is the depositor sophistication index, zR is the branch intensity index, zH is the local concentration index, Metropolitan dummy is a dummy variable for whether a bank is located in a metropolitan area, and zY is the deposit-weighted log median household income. Z scores are clipped at +/- 10. 
+
+Summary Statistics - Instruments and Selected Controls
+:::
+
+:::{#tbl-summary-statistics-growth}
+{{< include ../results/table_growth.txt >}}
+
+@tbl-summary-statistics-growth reports summary statistics for the deposit and loan growth rates from 2022Q1 to 2023Q3. All growth rates are expressed as quarter-on-quarter changes, and winsorized at the 0.5th and 99.5th percentiles. gDep is the growth rate of all deposits, gIBDep is the growth rate of interest-bearing deposits, gCoreDep is the growth rate of core deposits which includes demand deposits, saving deposits MMDAs, and small time deposits under 250K USD, gTotalLoans is the growth rate of total loans, gLoansNotForSale is the growth rate of loans not for sale, gSingleFamilyMortgages is the growth rate of 1-4 family mortgages, and gC&ILoans is the growth rate of commercial and industrial loans.
+
+Summary Statistics - Deposit and Loan Growth
+:::
+
+## Baseline results
+
+:::{#tbl-baseline-first-stage}
+{{< include ../results/baseline_first_stage.txt >}}
+
+*Notes*: This table reports baseline first-stage regressions for the IV specifications. The excluded instruments are interactions of the federal funds rate shock with pre-determined bank exposure indices (depositor sophistication, branch intensity, and deposit-weighted local concentration). The deposit-rate first stages use cumulative rate changes over the tightening cycle; the deposit-quantity first stages consider both flow deposit growth and cumulative deposit growth, as indicated by the dependent variable. All models include bank and quarter fixed effects and deposit-weighted region-by-quarter controls. Standard errors are clustered at the bank level. The reported joint $F$-statistic tests the relevance of the excluded instruments.
+
+Baseline first-stage results
+:::
+
+@tbl-baseline-first-stage reports the baseline first-stage regressions and provides the main tests of H1 and H2. The pricing first stages strongly confirm H1. The sophistication interaction is positive and precisely estimated, while the branch-intensity and concentration interactions are negative and precisely estimated, consistent with a model in which banks facing more financially engaged depositors must pass through more of the tightening into deposit rates, whereas branch-intensive banks and banks operating in more concentrated footprints can adjust rates more sluggishly. Instrument relevance is correspondingly strong: the excluded interactions easily clear conventional weak-instrument thresholds, implying that the exposure indices generate substantial policy-driven variation in cumulative deposit funding costs.
+
+The coefficients are also economically interpretable. Per 100 basis points of cumulative federal funds rate tightening, a one-standard-deviation increase in depositor sophistication predicts roughly 3.6 basis points higher cumulative effective deposit-rate pass-through relative to the average bank, while a one-standard-deviation increase in branch intensity predicts roughly 7.0 basis points lower pass-through. The corresponding effect for concentration exposure is about 0.6 basis points, an order of magnitude smaller than the other two exposures once they are included jointly. This scale comparison indicates that the empirical content of the first stage is driven primarily by depositor composition and branch-based funding models, with county concentration adding only modest incremental explanatory power. This pattern is consistent with the argument in @BS2023 and @NR2024 that HHI is, at best, a noisy proxy for deposit-market power in environments with uniform rate setting and heterogeneous depositor bases, and that it may partly reflect who banks serve and how they fund rather than competition alone.
+
+The quantity first stages speak to H2 and provide substantially weaker support than the pricing results. In the flow specification (quarterly changes in core deposits), branch intensity is negative and precisely estimated, while the sophistication interaction is positive and the concentration interaction is positive but only marginally precise. Two features are noteworthy. First, the positive coefficient on concentration runs counter to the canonical @DSS2016 interpretation in which higher HHI proxies for greater pricing power, lower pass-through, and therefore larger deposit outflows during tightening. Its limited precision, however, is consistent with the deliberately weak ex ante restriction in H2 that does not impose a sharp sign once depositor composition and funding models are allowed to matter. Second, the positive coefficient on depositor sophistication is opposite to the H2 prediction motivated by @NR2024 but is consistent with an alternative interpretation closer to @DSS2016: if sophisticated depositor bases induce higher pass-through, deposit pricing may adjust sufficiently to retain deposits, producing higher (rather than lower) observed deposit growth conditional on the common policy shock. Under either reading, the flow quantity first stage does not deliver a clean, theory-consistent mapping from exposures to deposit runoff and therefore warrants cautious interpretation.
+
+In the cumulative quantity specification, only branch intensity remains negative and highly significant, while the sophistication and concentration interactions are no longer statistically distinguishable from zero. This pattern suggests that county-based exposures contribute little incremental power in explaining cumulative deposit growth in this setting once bank fixed effects and controls are imposed. Consistent with this, the joint $F$-statistic for the excluded instruments is an order of magnitude smaller than in the deposit-rate first stage, indicating that the same exposure–policy interactions that sharply shift deposit funding costs generate much weaker and less coherent variation in deposit quantities. Taken together, the quantity first-stage evidence rejects a strong version of H2 along the sophistication dimension and indicates that instrument-induced variation in deposit quantities is not well aligned with a simple “more sophisticated depositors $\Rightarrow$ larger outflows” characterization in this sample.
+
+:::{#tbl-baseline-second-stage}
+{{< include ../results/baseline_2sls.txt >}}
+
+*Notes*: This table reports baseline 2SLS estimates of the effect of deposit funding conditions on lending. The dependent variable is the growth rate of loans not held for sale. The endogenous regressor is either the cumulative change in the effective deposit rate (funding-cost specifications) or a deposit-quantity measure (flow deposit growth or cumulative deposit growth, as indicated). Column (1) uses interest rate on total deposits as the instrumented variable; column (2) uses interest rate on interest-bearing deposits; column (3) uses the growth rate of core deposits; column (4) uses the cumulative growth rate of core deposits. All specifications include bank and quarter fixed effects and deposit-weighted region-by-quarter controls. Standard errors are clustered at the bank level. The Kleibergen–Paap rk Wald $F$-statistic reports instrument strength.
+
+Baseline second-stage results
+:::
+
+@tbl-baseline-second-stage presents the baseline 2SLS estimates for credit supply and provides the main test of H3. The funding-cost specification using the effective rate on total deposits in column (1) delivers a negative and precisely estimated effect of instrumented cumulative deposit-rate increases on the growth of loans not held for sale. The magnitude is economically meaningful: a 10 basis point higher policy-induced increase in a bank’s effective deposit rate predicts roughly 8 basis points lower quarterly loan growth, corresponding to about 32 basis points at an annual rate. This pattern is consistent with a deposit funding-cost channel through which tightening reduces credit supply and provides strong support for H3. When the endogenous funding-cost variable is instead the effective rate on interest-bearing deposits (column (2)), the estimated effect remains negative but is smaller in magnitude, consistent with the fact that variation in the interest-bearing rate is mechanically “levered” relative to the all-in average rate because the latter averages across non-interest-bearing and interest-bearing balances.
+
+The quantity-based specifications do not support H4. When the endogenous quantity variable is defined as flow deposit growth, the second-stage estimate is statistically indistinguishable from zero, consistent with weak identification and the absence of a reliably estimated mapping from contemporaneous deposit runoff to lending. When the endogenous quantity variable is defined as cumulative deposit growth, the coefficient is negative rather than positive and, where marginally precise, goes in the opposite direction from the canonical balance-sheet-constraint prediction that higher deposit growth should relax funding constraints and raise lending. Combined with the weaker and less coherent quantity first-stage evidence, these results indicate that the instruments do not identify a stand-alone outflow-to-lending mechanism in this episode; instead, observed deposit quantities appear to adjust endogenously alongside funding costs and liability substitution, leaving the funding-cost margin as the best-identified transmission channel.
+
+Results remain stable when the sample is restricted to small banks only. @tbl-baseline-small-banks reports the corresponding 2SLS estimates for the small-bank subsample.
+
+## Robustness checks
+
+:::{#tbl-robustness-rates}
+{{< include ../results/robustness_rates.txt >}}
+
+*Notes*: This table reports robustness first-stage regressions for alternative effective deposit-rate measures expressed as cumulative changes over the tightening cycle. The excluded instruments are interactions of the cumulative federal funds rate change with pre-determined bank exposure indices (depositor sophistication, branch intensity, and deposit-weighted local concentration). All models include bank and quarter fixed effects and deposit-weighted region-by-quarter controls. Standard errors are clustered at the bank level. The reported joint $F$-statistic tests the relevance of the excluded instruments.
+
+Robustness checks - Rates
+:::
+
+:::{#tbl-robustness-quantities}
+{{< include ../results/robustness_quantity.txt >}}
+
+*Notes*: This table reports robustness first-stage regressions for alternative deposit-quantity outcomes, including both flow deposit growth and cumulative deposit growth measures, as indicated by the dependent variable. First two columns removed the metro and income controls, and the last two columns use flow deposit rate changes as the dependent variable. All models include bank and quarter fixed effects and deposit-weighted region-by-quarter controls. Standard errors are clustered at the bank level. The reported joint $F$-statistic tests the relevance of the excluded instruments.
+
+Robustness checks - Quantities
+:::
+
+@tbl-robustness-rates and @tbl-robustness-quantities assess the sensitivity of the first-stage relationships to alternative measures and control sets. On the pricing side, the exposure–shock interactions remain strong and stable when the metropolitan and income interactions are omitted. The sign pattern continues to align with H1, and instrument relevance remains high, indicating that the baseline pricing first stage is not driven by these additional controls. The same qualitative pattern also appears when the dependent variable is defined as the flow change in the effective deposit rate rather than the cumulative change, consistent with the view that the exposure indices capture persistent heterogeneity in pass-through rather than a specification artifact tied to the cumulative construction.
+
+On the quantity side, the results are broadly consistent with the baseline conclusion that H2 is not supported as a clean quantity prediction. Omitting the metropolitan and income interactions leaves the core-deposit growth first stage qualitatively unchanged: branch intensity remains the dominant and consistently negative predictor of deposit growth, while sophistication and concentration continue to display weaker and less stable patterns. Using total deposits or interest-bearing deposits as the dependent variable yields similar qualitative results, suggesting that the lack of a sharp, theory-consistent quantity first stage is not specific to a particular deposit aggregate. Likewise, defining the quantity outcome as cumulative total deposit growth produces patterns similar to those for cumulative core deposits, reinforcing the conclusion that county-based exposures contribute limited incremental power for explaining deposit quantities in this setting relative to the pricing margin.
+
+:::{#tbl-robustness-2sls}
+{{< include ../results/robustness_2sls.txt >}}
+
+*Notes*: This table reports robustness 2SLS estimates using alternative deposit measures as the endogenous variable, while keeping the dependent variable as the growth rate of loans not held for sale. Each endogenous deposit measure is instrumented using the corresponding exposure–policy interactions from the first stage; metropolitan and income interactions enter as included controls. All specifications include bank and quarter fixed effects and deposit-weighted region-by-quarter controls. Standard errors are clustered at the bank level. The Kleibergen–Paap rk Wald $F$-statistic reports instrument strength.
+
+Robustness checks - 2SLS
+:::
+
+@tbl-robustness-2sls reports robustness 2SLS specifications using alternative deposit measures. In column (1), the endogenous variable is the cumulative change in total deposit rates; dropping the metro and income controls leaves the sign and statistical significance unchanged, with a slightly larger estimated magnitude. Column (2) instead uses cumulative core deposit growth (again excluding the metro and income controls); the effect of deposit growth on lending remains negative, contrary to H4. Columns (3) and (4) use the cumulative change in total deposit rates and interest-bearing deposit rates, respectively, and deliver results consistent with the baseline, with noticeably higher Kleibergen–Paap rk F-statistics. Overall, these robustness checks reinforce the paper’s main conclusion that, in the 2022–2023 tightening cycle, the best-identified transmission margin operates through deposit funding costs rather than core-deposit volumes.
+
+# Discussion
+
+The results can be summarized in terms of the four hypotheses set out in Section 3.7. On the pricing margin, the data strongly confirm H1: banks with more sophisticated depositor bases and fewer branches per dollar of deposits pass through more of the cumulative policy tightening into effective deposit rates, while banks with dense branch networks and those operating in more concentrated local markets raise deposit rates less. Instrument strength is very high in these specifications, and the signs are stable across a range of deposit-rate measures. On the quantity margin, H2 is rejected: the sophistication interaction has the opposite sign to the prediction, the HHI interaction is weak and unstable, and only branch intensity generates consistently negative quantity effects, with an overall first-stage fit that is modest. In the second stage, H3 is clearly supported—policy-induced increases in effective deposit rates have a statistically and economically significant negative effect on loan growth, whereas H4 is not: the quantity-based specifications yield coefficients of the wrong sign and only marginal significance. For the local average treatment group identified by the instruments, the deposit channel in this episode operates primarily through the cost of deposit funding, not through a simple mechanical link between deposit quantities and lending.
+
+These findings have direct implications for the ongoing debate over whether the deposit channel is fundamentally about bank market power or about depositor characteristics. A strict reading of @NR2024 would suggest that once depositor composition is accounted for, market power in the sense of local concentration plays little role in shaping deposit responses to policy. The evidence here is more nuanced. On the one hand, the HHI interaction is indeed much weaker than the sophistication and branch-intensity interactions, especially for deposit quantities, and this is consistent with the critique that county-level concentration is a noisy stand-in for pricing power [@BS2023]. On the other hand, the positive sophistication coefficient and negative branch-intensity and HHI coefficients in the deposit-rate regressions are exactly what a deposit-franchise interpretation would predict: banks that face less sophisticated depositors or enjoy strong branch-based franchises are able to hold deposit rates further below the policy rate, while banks whose depositors are more sophisticated must raise rates more. In this sense, the results support a deposit channel that is still about banks’ ability to pay below-market rates to certain depositor bases, but in which depositor characteristics and branch-intensive funding models are better empirical proxies than HHI alone.
+
+The weakness of the quantity side is, to some extent, consistent with a horizontalist view of banking and monetary transmission. In a horizontalist framework, reserves are supplied elastically at the policy rate, banks adjust liability mixes endogenously, and loan supply is not tightly constrained by contemporaneous reserve or deposit quantities [@Moore1991]. The finding that policy-induced heterogeneity in deposit funding costs has clear effects on loan growth, while corresponding heterogeneity in deposit quantities is harder to detect and sometimes points in the “wrong” direction, fits a picture in which banks actively substitute across liabilities and manage balance sheets so that core-deposit volumes are not the primary binding constraint. In such an environment, the deposit channel operates mainly through the pricing of funding rather than through a hard funding-quantity constraint, and the empirical importance of the “deposit price channel” warrants more theoretical work that explicitly links deposit-franchise value, depositor characteristics, and loan-supply decisions.
+
+At the same time, the estimates here remain reduced form. The 2SLS coefficients do not separately identify the micro mechanisms through which higher funding costs reduce lending. The interpretation of the results rests on the assumption that at least some borrowers cannot costlessly substitute away from relationship-based lenders when their banks face adverse funding shocks [@ErelLiebersohnYannelisEarnest2023]. Within this reduced-form framework, classic channels such as credit rationing under adverse selection [@StiglitzWeiss1981], bank-capital and earnings constraints that tie loan growth to net interest margins [@VanDenHeuvel2002], and the interaction of deposit-market power with regulatory capital requirements [@WangWhitedWuXiao2020] are all consistent with the estimated elasticity. Future work could push beyond this reduced form by modeling explicitly how depositor sophistication, branch networks, and liability choices interact with these mechanisms, and by using richer balance-sheet and income data to distinguish funding-cost effects from capital and risk-management effects.
+
+Several limitations suggest directions for future research. First, the sample window covers only the 2022–2023 tightening cycle. A longer panel spanning multiple cycles would allow the stability of the funding-cost elasticity to be tested across different rate environments, regulatory regimes, and competitive structures. Second, the key assumption that some borrowers cannot easily replace relationship lenders could be examined more directly with borrower-level data. Existing evidence from emerging markets suggests that deposit funding shocks can sharply contract credit to small firms with limited outside options, including in settings such as Pakistan, but comparable micro data for the United States are scarce [@KhwajaMian2008]. Third, although the identification strategy is designed to absorb local demand conditions using region-by-quarter effects, a metropolitan dummy, and deposit-weighted median income, there remains a risk that the three exposure indices capture residual variation in loan demand or local economic prospects. As emphasized by @BS2023, this concern is difficult to avoid in any design that relies on cross-sectional heterogeneity in funding structures or geography; it is a general feature of the deposit-channel literature rather than a limitation unique to this paper. Nevertheless, future work could combine bank-level instruments with borrower-level outcomes or with more granular local controls to further mitigate such concerns.
+
+In addition, the baseline specifications follow much of the deposit-channel literature in not conditioning on time-varying bank balance-sheet characteristics (e.g., size, liquidity, or capital ratios), relying instead on bank fixed effects to absorb level differences across institutions. This choice preserves a parsimonious design but leaves open an important interpretation issue: if balance-sheet characteristics systematically shape the sensitivity of deposit funding costs to tightening—such that smaller or less liquid banks must raise deposit rates more aggressively to retain or replace core deposits—then these characteristics may interact with the policy shock and affect the first stage and the lending response through slope heterogeneity rather than levels. Future work could extend the framework by allowing exposure to vary with pre-determined balance-sheet attributes (or by estimating heterogeneous treatment effects by size and liquidity) to assess whether the funding-cost channel is amplified when liability substitution is more costly.
+
+Overall, the evidence in this paper supports a cost-based formulation of the deposit channel in which tighter policy raises effective deposit funding costs and banks respond by slowing balance-sheet expansion, while the pure quantity channel appears weak and empirically fragile. The contribution of this paper is to provide a bank-level, policy-driven estimate of that funding-cost effect under an identification strategy that explicitly addresses uniform-pricing and aggregability critiques. Theoretical and empirical work that builds micro foundations for the deposit price channel, explores its interaction with capital regulation and competition, and tests its implications in longer and richer datasets remains an important agenda for future research. 
+
+# Conclusion
+
+This paper investigates how policy-induced shifts in deposit funding conditions affect bank credit supply over the 2022–2023 monetary tightening cycle. Predetermined exposure indices capturing depositor sophistication, branch intensity, and local concentration are interacted with cumulative changes in the federal funds rate to generate bank-level shift–share instruments that move cumulative effective deposit rates strongly and deposit quantities more weakly. The first-stage evidence confirms a pricing-based deposit channel: banks with more sophisticated depositor bases and less branch-intensive, less concentrated footprints exhibit higher cumulative deposit-rate pass-through, whereas branch-intensive and high-HHI banks adjust deposit rates more sluggishly, with HHI playing a secondary role. In the second stage, higher instrumented effective deposit rates lead to materially slower growth in loans not held for sale, providing a robust bank-level local average treatment effect that links monetary tightening to credit supply through the cost of deposit funding. By contrast, instrumented deposit-growth measures yield coefficients that are only marginally significant and of the opposite sign to a simple quantity-based deposit channel, reflecting both weaker instrument strength and the fact that banks facing larger funding-cost shocks both cut lending and experience weaker deposit growth. Overall, the findings support a cost-based formulation of the deposit channel in which tighter policy raises effective funding costs and banks respond by contracting balance-sheet expansion even in the presence of active liability substitution, while the pure quantity channel appears weak and empirically fragile.
+
+These results highlight the importance of deposit pricing and depositor composition for monetary transmission and suggest that the deposit price channel deserves further theoretical and empirical attention. Because the 2SLS estimates are reduced form, they do not separately identify the micro mechanisms through which higher funding costs reduce lending; classic channels such as credit rationing under adverse selection, capital and earnings constraints, and the presence of borrowers that cannot easily replace relationship lenders remain alternative interpretations of the estimated elasticity. The analysis is limited to a single tightening cycle and relies on cross-sectional exposure indices that may still capture residual local demand conditions, despite controls for metropolitan status, income, and region-by-quarter shocks, a concern that is common to identification strategies in this literature. Future work could build on the framework developed here by microfounding the deposit price channel in models that jointly treat depositor sophistication, branch networks, and liability management; extending the empirical analysis to longer panels spanning multiple cycles; and combining bank-level instruments with borrower-level or regional outcomes to test more directly whether some borrowers are unable to substitute away from relationship lenders when banks are hit by deposit funding shocks.
+
+
+# References
+::: {#refs}
+:::
+
+\newpage
+# Appendix
+
+## Appendix 1: Principal Component Analysis
+
+:::{#tbl-pca-results}
+{{< include ../results/sophistication_index_pca_loadings.txt >}}
+
+Principal Component Analysis Loadings
+:::
+
+@tbl-pca-results reports the loadings of the principal component analysis. The first principal component is considered as the depositor sophistication index, which explains 51.8% of the variance in the county-level data. 
+
+## Appendix 2: Baseline results for small banks
+:::{#tbl-baseline-small-banks}
+{{< include ../results/appendix_smallbanks.txt >}}
+
+Baseline results for small banks
+:::
+
+@tbl-baseline-small-banks reports the baseline results for small banks. The results remain consistent with the baseline results for all banks.
+
+## Appendix 3: 2SLS results for loan sub-categories
+:::{#tbl-2sls-results-loan-sub-categories}
+{{< include ../results/appendix_2sls.txt >}}
+
+2SLS results for loan sub-categories
+:::
