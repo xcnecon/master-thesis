@@ -62,13 +62,13 @@ def main() -> None:
 
     # Shading period: 2022Q1 to 2023Q3
     shade_start = pd.Timestamp('2022-03-31')  # quarter end for Q1 2022
-    shade_end = pd.Timestamp('2023-09-30')    # quarter end for Q3 2023
+    shade_end = pd.Timestamp('2023-06-30')    # quarter end for Q2 2023
 
     # Left: weighted aggregate
     axes[0].plot(ts_weighted['rssd9999'], ts_weighted['weighted_interest_rate_on_deposit'], label='All deposits')
     axes[0].plot(ts_weighted['rssd9999'], ts_weighted['weighted_interest_rate_on_interest_bearing_deposit'], label='Interest-bearing deposits')
     axes[0].plot(ffr['date'], ffr['ffr_upper'], label='FFR upper limit', color='black', linestyle='--', alpha=0.8)
-    axes[0].axvspan(shade_start, shade_end, color='gray', alpha=0.15, label='2022Q1–2023Q3')
+    axes[0].axvspan(shade_start, shade_end, color='gray', alpha=0.15, label='2022Q1–2023Q2')
     axes[0].set_title('Aggregate (sum interest / sum deposits)')
     axes[0].set_xlabel('Date')
     axes[0].set_ylabel('Annualized rate')
@@ -79,7 +79,7 @@ def main() -> None:
     axes[1].plot(ts_simple_w['rssd9999'], ts_simple_w['interest_rate_on_deposit'], label='All deposits')
     axes[1].plot(ts_simple_w['rssd9999'], ts_simple_w['interest_rate_on_interest_bearing_deposit'], label='Interest-bearing deposits')
     axes[1].plot(ffr['date'], ffr['ffr_upper'], label='FFR upper limit', color='black', linestyle='--', alpha=0.8)
-    axes[1].axvspan(shade_start, shade_end, color='gray', alpha=0.15, label='2022Q1–2023Q3')
+    axes[1].axvspan(shade_start, shade_end, color='gray', alpha=0.15, label='2022Q1–2023Q2')
     axes[1].set_title('Winsorized simple average across banks')
     axes[1].set_xlabel('Date')
     axes[1].set_ylabel('Annualized rate')

@@ -4,11 +4,11 @@
 |Sample | All banks | All banks | All banks | All banks |
 |cum ΔDeposit rate | -1.068130*** | - | - | - |
 | | (0.225561) | - | - | - |
-|cum Δ Core deposit | - | -0.245423*** | - | - |
+|cum ΔCore deposit | - | -0.245423*** | - | - |
 | | - | (0.070620) | - | - |
-|cum Δ total deposit | - | - | -0.143536*** | - |
+|cum ΔTotal deposit | - | - | -0.143536*** | - |
 | | - | - | (0.053143) | - |
-|cum Δ IB deposits | - | - | - | -0.089399*** |
+|cum ΔIB deposits | - | - | - | -0.089399*** |
 | | - | - | - | (0.030344) |
 |Observations | 28,822 | 28,822 | 28,822 | 28,822 |
 |Clusters     | 3,820 | 3,820 | 3,820 | 3,820 |
